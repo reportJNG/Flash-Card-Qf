@@ -101,7 +101,7 @@ export default function CategoryDetailPage() {
       toast.success('Question added!');
       setNewQuestion('');
       setNewAnswer('');
-      loadData();
+      await loadData();
       if (!andAnother) setActiveTab('questions');
     } else {
       toast.error(result.error || 'Failed to add');
@@ -116,7 +116,7 @@ export default function CategoryDetailPage() {
     if (result.success) {
       toast.success('Updated!');
       setEditingId(null);
-      loadData();
+      await loadData();
     } else {
       toast.error(result.error || 'Failed to update');
     }
@@ -127,7 +127,7 @@ export default function CategoryDetailPage() {
     const result = await deleteQuestion(deleteTarget.id);
     if (result.success) {
       toast.success('Deleted');
-      setQuestions(prev => prev.filter(q => q.id !== deleteTarget.id));
+      await loadData();
     } else {
       toast.error(result.error || 'Failed to delete');
     }
@@ -151,7 +151,7 @@ export default function CategoryDetailPage() {
     const result = await moveQuestion(questionId, newCategoryId);
     if (result.success) {
       toast.success('Moved!');
-      setQuestions(prev => prev.filter(q => q.id !== questionId));
+      await loadData();
     } else {
       toast.error(result.error || 'Failed to move');
     }
@@ -169,7 +169,7 @@ export default function CategoryDetailPage() {
       toast.success(`Imported ${result.data?.count || validPairs.length} questions!`);
       setParsedPairs([]);
       setActiveTab('questions');
-      loadData();
+      await loadData();
     } else {
       toast.error(result.error || 'Import failed');
     }

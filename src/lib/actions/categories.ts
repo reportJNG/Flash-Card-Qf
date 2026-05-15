@@ -6,6 +6,18 @@ import { createCategorySchema } from '@/lib/validations/schemas';
 import { ActionResult, Category, CategoryOverview } from '@/types/app';
 import { revalidatePath } from 'next/cache';
 
+type CategoryOverviewRow = Omit<CategoryOverview, 'id'> & {
+  category_id: string;
+};
+
+function normalizeCategoryOverview(row: CategoryOverviewRow): CategoryOverview {
+  const { category_id, ...category } = row;
+  return {
+    ...category,
+    id: category_id,
+  };
+}
+
 export async function getCategories(profileId: string): Promise<ActionResult<CategoryOverview[]>> {
   const session = await getSession();
   if (!session || session.profile_id !== profileId) {
@@ -21,7 +33,10 @@ export async function getCategories(profileId: string): Promise<ActionResult<Cat
     .order('created_at', { ascending: true });
 
   if (error) return { success: false, error: error.message };
-  return { success: true, data: data as CategoryOverview[] };
+  return {
+    success: true,
+    data: ((data || []) as CategoryOverviewRow[]).map(normalizeCategoryOverview),
+  };
 }
 
 export async function getCategoryById(id: string): Promise<ActionResult<Category>> {

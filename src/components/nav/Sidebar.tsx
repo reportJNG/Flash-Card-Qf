@@ -36,7 +36,8 @@ export function Sidebar({ profile }: SidebarProps) {
       )}
     >
       {/* Logo */}
-      <div className={cn('flex items-center h-16 px-4 border-b border-border-subtle', collapsed && 'justify-center px-2')}>\n        {!collapsed && (
+      <div className={cn('flex items-center h-16 px-4 border-b border-border-subtle', collapsed && 'justify-center px-2')}>
+        {!collapsed && (
           <Link href="/dashboard" className="text-xl font-bold text-gradient">
           FlashQF
           </Link>

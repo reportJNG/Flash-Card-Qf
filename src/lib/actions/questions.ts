@@ -6,6 +6,20 @@ import { createQuestionSchema, updateQuestionSchema } from '@/lib/validations/sc
 import { ActionResult, Question, ParsedQAPair } from '@/types/app';
 import { revalidatePath } from 'next/cache';
 
+async function verifyCategoryOwnership(
+  supabase: ReturnType<typeof createClient>,
+  categoryId: string,
+  profileId: string
+) {
+  const { data } = await supabase
+    .from('categories')
+    .select('profile_id')
+    .eq('id', categoryId)
+    .single();
+
+  return !!data && data.profile_id === profileId;
+}
+
 export async function getQuestions(
   categoryId: string,
   options?: { search?: string; sort?: string }
@@ -62,6 +76,9 @@ export async function createQuestion(
   if (!parsed.success) return { success: false, error: parsed.error.issues[0].message };
 
   const supabase = createClient();
+  const ownsCategory = await verifyCategoryOwnership(supabase, categoryId, profileId);
+  if (!ownsCategory) return { success: false, error: 'Category not found' };
+
   const { data, error } = await supabase
     .from('questions')
     .insert({
@@ -76,6 +93,9 @@ export async function createQuestion(
   if (error) return { success: false, error: error.message };
 
   revalidatePath(`/categories/${categoryId}`);
+  revalidatePath('/categories');
+  revalidatePath('/play');
+  revalidatePath('/planning');
   return { success: true, data: data as Question };
 }
 
@@ -93,6 +113,9 @@ export async function createQuestionsBulk(
   if (validPairs.length === 0) return { success: false, error: 'No valid questions to import' };
 
   const supabase = createClient();
+  const ownsCategory = await verifyCategoryOwnership(supabase, categoryId, profileId);
+  if (!ownsCategory) return { success: false, error: 'Category not found' };
+
   const questions = validPairs.map((p, i) => ({
     profile_id: profileId,
     category_id: categoryId,
@@ -106,6 +129,9 @@ export async function createQuestionsBulk(
   if (error) return { success: false, error: error.message };
 
   revalidatePath(`/categories/${categoryId}`);
+  revalidatePath('/categories');
+  revalidatePath('/play');
+  revalidatePath('/planning');
   return { success: true, data: { count: validPairs.length } };
 }
 
@@ -152,6 +178,9 @@ export async function moveQuestion(id: string, newCategoryId: string): Promise<A
     return { success: false, error: 'Not found' };
   }
 
+  const ownsTargetCategory = await verifyCategoryOwnership(supabase, newCategoryId, session.profile_id);
+  if (!ownsTargetCategory) return { success: false, error: 'Target category not found' };
+
   const { error } = await supabase
     .from('questions')
     .update({ category_id: newCategoryId })
@@ -161,6 +190,9 @@ export async function moveQuestion(id: string, newCategoryId: string): Promise<A
 
   revalidatePath(`/categories/${existing.category_id}`);
   revalidatePath(`/categories/${newCategoryId}`);
+  revalidatePath('/categories');
+  revalidatePath('/play');
+  revalidatePath('/planning');
   return { success: true };
 }
 
@@ -179,6 +211,9 @@ export async function deleteQuestion(id: string): Promise<ActionResult<void>> {
   if (error) return { success: false, error: error.message };
 
   revalidatePath(`/categories/${existing.category_id}`);
+  revalidatePath('/categories');
+  revalidatePath('/play');
+  revalidatePath('/planning');
   return { success: true };
 }
 
