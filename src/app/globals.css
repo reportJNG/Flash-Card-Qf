@@ -67,6 +67,12 @@
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary;
   }
+  .field {
+    @apply w-full rounded-lg border border-border-subtle bg-bg-quaternary px-3 py-2 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-accent-indigo/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .surface-hover {
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:border-border-active hover:shadow-elevated;
+  }
   .bg-shimmer {
     background: linear-gradient(
       90deg,

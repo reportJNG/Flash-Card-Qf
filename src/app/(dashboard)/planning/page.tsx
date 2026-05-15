@@ -10,7 +10,7 @@ import { Play, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { CategoryIcon } from '@/lib/category-icons';
-import { LoadingState, PageHeader } from '@/components/shared/AppShell';
+import { LoadingState, PageHeader, SegmentedControl } from '@/components/shared/AppShell';
 
 type SortOption = 'most' | 'unseen' | 'mastery';
 
@@ -100,24 +100,16 @@ export default function PlanningPage() {
       </motion.div>
 
       {/* Sort Controls */}
-      <div className="flex flex-wrap gap-2">
-        {([
-          { key: 'most' as SortOption, label: 'Most Questions' },
-          { key: 'unseen' as SortOption, label: 'Most Unseen' },
-          { key: 'mastery' as SortOption, label: 'Lowest Mastery' },
-        ]).map(opt => (
-          <button
-            key={opt.key}
-            onClick={() => setSortBy(opt.key)}
-            className={cn(
-              'px-4 py-2 rounded-full text-sm font-medium transition-all',
-              sortBy === opt.key ? 'bg-accent-indigo text-white' : 'bg-bg-tertiary text-text-secondary hover:text-text-primary'
-            )}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
+      <SegmentedControl
+        value={sortBy}
+        onChange={setSortBy}
+        className="grid-cols-1 sm:grid-cols-3"
+        options={[
+          { value: 'most', label: 'Most Questions' },
+          { value: 'unseen', label: 'Most Unseen' },
+          { value: 'mastery', label: 'Lowest Mastery' },
+        ]}
+      />
 
       {/* Planning Grid */}
       <motion.div
@@ -131,13 +123,13 @@ export default function PlanningPage() {
             key={cat.id}
             variants={itemVariants}
             layout
-            className="panel p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-elevated"
+            className="panel surface-hover p-5"
           >
-            <div className="flex items-center gap-2 mb-3">
+            <div className="mb-3 flex min-w-0 items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-subtle bg-bg-quaternary" style={{ color: cat.color }}>
                 <CategoryIcon icon={cat.icon} className="h-4 w-4" />
               </div>
-              <h3 className="font-semibold text-text-primary">{cat.name}</h3>
+              <h3 className="truncate font-semibold text-text-primary">{cat.name}</h3>
             </div>
             <p className="text-sm text-text-muted mb-3">{cat.question_count} questions</p>
             <MiniDifficultyBar

@@ -71,7 +71,7 @@ export function CreateProfileModal({ isOpen, onClose, onSuccess }: CreateProfile
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.96, y: 16 }}
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-            className="w-full max-w-md rounded-lg border border-border-subtle bg-bg-secondary p-6 shadow-elevated"
+            className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-lg border border-border-subtle bg-bg-secondary p-5 shadow-elevated sm:p-6"
             onClick={e => e.stopPropagation()}
           >
             <div className="mb-6 flex items-start justify-between gap-4">

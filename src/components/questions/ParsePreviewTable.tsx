@@ -55,8 +55,53 @@ export function ParsePreviewTable({ pairs, onPairsChange, onImport, onCancel }: 
         {validPairs.length} valid question{validPairs.length !== 1 ? 's' : ''} ready to import
       </div>
 
-      <div className="max-h-[400px] overflow-y-auto rounded-lg border border-border-subtle bg-bg-tertiary scrollbar-thin">
-        <table className="w-full">
+      <div className="space-y-3 md:hidden">
+        {pairs.map((pair, i) => (
+          pair.valid && (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.02 }}
+              className="rounded-lg border border-border-subtle bg-bg-tertiary p-3"
+            >
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <span className="font-mono text-xs text-text-muted">#{i + 1}</span>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => movePair(i, 'up')} className="rounded p-1 text-text-muted hover:bg-white/10 hover:text-text-primary focus-ring" aria-label="Move up">
+                    <ArrowUp className="h-3.5 w-3.5" />
+                  </button>
+                  <button onClick={() => movePair(i, 'down')} className="rounded p-1 text-text-muted hover:bg-white/10 hover:text-text-primary focus-ring" aria-label="Move down">
+                    <ArrowDown className="h-3.5 w-3.5" />
+                  </button>
+                  <button onClick={() => deletePair(i)} className="rounded p-1 text-text-muted hover:bg-red-500/10 hover:text-accent-red focus-ring" aria-label="Delete row">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+              <label className="mb-2 block">
+                <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-text-muted">Question</span>
+                <textarea
+                  value={pair.question}
+                  onChange={e => updatePair(i, 'question', e.target.value)}
+                  className="field min-h-20 resize-y"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-text-muted">Answer</span>
+                <textarea
+                  value={pair.answer}
+                  onChange={e => updatePair(i, 'answer', e.target.value)}
+                  className="field min-h-20 resize-y text-text-secondary"
+                />
+              </label>
+            </motion.div>
+          )
+        ))}
+      </div>
+
+      <div className="hidden max-h-[400px] overflow-y-auto rounded-lg border border-border-subtle bg-bg-tertiary scrollbar-thin md:block">
+        <table className="w-full min-w-[720px]">
           <thead>
             <tr className="bg-bg-quaternary text-left">
               <th className="px-3 py-2 text-xs text-text-muted font-medium w-10">#</th>
@@ -79,25 +124,25 @@ export function ParsePreviewTable({ pairs, onPairsChange, onImport, onCancel }: 
                     <input
                       value={pair.question}
                       onChange={e => updatePair(i, 'question', e.target.value)}
-                      className="w-full bg-transparent text-sm text-text-primary focus:outline-none border-b border-transparent focus:border-accent-indigo/50 pb-1"
+                      className="w-full border-b border-transparent bg-transparent pb-1 text-sm text-text-primary focus:border-accent-indigo/50 focus:outline-none"
                     />
                   </td>
                   <td className="px-3 py-2">
                     <input
                       value={pair.answer}
                       onChange={e => updatePair(i, 'answer', e.target.value)}
-                      className="w-full bg-transparent text-sm text-text-secondary focus:outline-none border-b border-transparent focus:border-accent-indigo/50 pb-1"
+                      className="w-full border-b border-transparent bg-transparent pb-1 text-sm text-text-secondary focus:border-accent-indigo/50 focus:outline-none"
                     />
                   </td>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-1">
-                      <button onClick={() => movePair(i, 'up')} className="p-1 hover:bg-white/10 rounded text-text-muted hover:text-text-primary">
+                      <button onClick={() => movePair(i, 'up')} className="rounded p-1 text-text-muted hover:bg-white/10 hover:text-text-primary focus-ring" aria-label="Move up">
                         <ArrowUp className="w-3 h-3" />
                       </button>
-                      <button onClick={() => movePair(i, 'down')} className="p-1 hover:bg-white/10 rounded text-text-muted hover:text-text-primary">
+                      <button onClick={() => movePair(i, 'down')} className="rounded p-1 text-text-muted hover:bg-white/10 hover:text-text-primary focus-ring" aria-label="Move down">
                         <ArrowDown className="w-3 h-3" />
                       </button>
-                      <button onClick={() => deletePair(i)} className="p-1 hover:bg-red-500/10 rounded text-text-muted hover:text-accent-red">
+                      <button onClick={() => deletePair(i)} className="rounded p-1 text-text-muted hover:bg-red-500/10 hover:text-accent-red focus-ring" aria-label="Delete row">
                         <Trash2 className="w-3 h-3" />
                       </button>
                     </div>
@@ -109,11 +154,11 @@ export function ParsePreviewTable({ pairs, onPairsChange, onImport, onCancel }: 
         </table>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <button
           onClick={handleImport}
           disabled={isImporting || validPairs.length === 0}
-          className="flex items-center gap-2 px-6 py-2.5 bg-accent-indigo hover:bg-indigo-600 disabled:bg-bg-quaternary disabled:text-text-muted text-white rounded-lg transition-colors text-sm font-medium"
+          className="flex items-center justify-center gap-2 rounded-lg bg-accent-indigo px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-indigo/90 disabled:bg-bg-quaternary disabled:text-text-muted"
         >
           <Upload className="w-4 h-4" />
           {isImporting ? 'Importing...' : `Import ${validPairs.length} Questions`}

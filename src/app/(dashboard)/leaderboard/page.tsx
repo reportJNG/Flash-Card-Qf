@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Avatar } from '@/components/shared/Avatar';
 import { LeaderboardEntry } from '@/types/app';
 import { cn } from '@/lib/utils';
-import { LoadingState, PageHeader } from '@/components/shared/AppShell';
+import { LoadingState, MobileCardList, PageHeader } from '@/components/shared/AppShell';
 
 const podium = [
   { height: 'h-32', bg: 'bg-amber-500/20', border: 'border-amber-500/50', icon: Crown, color: 'text-accent-gold' },
@@ -92,8 +92,36 @@ export default function LeaderboardPage() {
       </div>
 
       <div className="panel overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <MobileCardList className="p-3">
+          {entries.map((entry) => (
+            <div key={entry.profile_id} className={cn('rounded-lg border border-border-subtle bg-bg-secondary p-3', entry.profile_id === myProfileId && 'border-border-active bg-accent-indigo/10')}>
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-2">
+                  <RankIcon rank={entry.rank} />
+                  <Avatar name={entry.display_name} color={entry.avatar_color} size="sm" />
+                  <span className="truncate text-sm font-medium text-text-primary">{entry.display_name}</span>
+                </div>
+                <span className="font-mono text-sm font-semibold text-accent-gold">{entry.total_points}</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-right text-sm">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-text-muted">Questions</p>
+                  <p className="font-mono text-text-secondary">{entry.total_questions}</p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-text-muted">Accuracy</p>
+                  <p className="font-mono text-text-secondary">{Math.round((entry.accuracy_rate || 0) * 100)}%</p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-text-muted">Smart</p>
+                  <p className="font-mono text-text-secondary">{Math.round(entry.smart_rate || 0)}%</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </MobileCardList>
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full min-w-[720px]">
             <thead>
               <tr className="border-b border-border-subtle bg-bg-quaternary/70 text-left">
                 <th className="px-4 py-3 text-xs font-medium uppercase text-text-muted">Rank</th>

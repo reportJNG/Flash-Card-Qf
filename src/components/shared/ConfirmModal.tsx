@@ -42,7 +42,7 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, title, description, c
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
           onClick={handleClose}
         >
           <motion.div
@@ -50,7 +50,7 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, title, description, c
             animate={isShaking ? { x: [-10, 10, -10, 10, 0] } : { scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="bg-bg-secondary rounded-xl p-6 max-w-md w-full mx-4 shadow-elevated border border-border-subtle"
+            className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-lg border border-border-subtle bg-bg-secondary p-5 shadow-elevated sm:p-6"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-start justify-between mb-4">

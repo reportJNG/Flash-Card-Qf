@@ -18,6 +18,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: 'FlashQF',
   description: 'Personal flashcard study application',
+  icons:'./favicon.ico',
 };
 
 export default function RootLayout({

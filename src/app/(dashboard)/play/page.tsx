@@ -10,7 +10,7 @@ import { CategoryOverview } from '@/types/app';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { CategoryIcon } from '@/lib/category-icons';
-import { PageHeader } from '@/components/shared/AppShell';
+import { PageHeader, SegmentedControl } from '@/components/shared/AppShell';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -127,7 +127,7 @@ export default function PlaySetupPage() {
   };
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="mx-auto max-w-2xl space-y-6 pb-24">
+    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="mx-auto max-w-2xl space-y-6">
       <motion.div variants={itemVariants}>
         <PageHeader title="Play Setup" description="Choose the focus, pace, and card count for this session." icon={Play} />
       </motion.div>
@@ -135,11 +135,11 @@ export default function PlaySetupPage() {
       {/* Mode Selection */}
       <motion.div variants={itemVariants} className="space-y-3">
         <h2 className="text-lg font-semibold text-text-primary">Choose Mode</h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <button
             onClick={() => setMode('normal')}
             className={cn(
-              'p-4 rounded-xl border-2 transition-all text-left',
+              'surface-hover rounded-lg border p-4 text-left focus-ring',
               mode === 'normal' ? 'border-accent-indigo bg-accent-indigo/5' : 'border-border-subtle hover:border-text-muted'
             )}
           >
@@ -150,7 +150,7 @@ export default function PlaySetupPage() {
           <button
             onClick={() => setMode('hard')}
             className={cn(
-              'p-4 rounded-xl border-2 transition-all text-left',
+              'surface-hover rounded-lg border p-4 text-left focus-ring',
               mode === 'hard' ? 'border-accent-orange bg-orange-500/5' : 'border-border-subtle hover:border-text-muted'
             )}
           >
@@ -164,38 +164,21 @@ export default function PlaySetupPage() {
       {/* Category Selection */}
       <motion.div variants={itemVariants} className="space-y-3">
         <h2 className="text-lg font-semibold text-text-primary">Select Categories</h2>
-        <div className="space-y-2">
-          {[
-            { key: 'all' as const, label: 'All Categories', desc: 'Random across everything' },
-            { key: 'specific' as const, label: 'Choose Specific', desc: 'Select one or more categories' },
-            { key: 'special' as const, label: 'Special Only', desc: 'Only saved star questions' },
-          ].map(opt => (
-            <button
-              key={opt.key}
-              onClick={() => setCatSelection(opt.key)}
-              className={cn(
-                'w-full flex items-center gap-3 p-3 rounded-lg border transition-all text-left',
-                catSelection === opt.key ? 'border-accent-indigo bg-accent-indigo/5' : 'border-border-subtle hover:border-text-muted'
-              )}
-            >
-              <div className={cn(
-                'w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0',
-                catSelection === opt.key ? 'border-accent-indigo' : 'border-text-muted'
-              )}>
-                {catSelection === opt.key && <div className="w-2.5 h-2.5 rounded-full bg-accent-indigo" />}
-              </div>
-              <div>
-                <p className={cn('text-sm font-medium', catSelection === opt.key ? 'text-text-primary' : 'text-text-secondary')}>{opt.label}</p>
-                <p className="text-xs text-text-muted">{opt.desc}</p>
-              </div>
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          value={catSelection}
+          onChange={setCatSelection}
+          className="grid-cols-1 sm:grid-cols-3"
+          options={[
+            { value: 'all', label: 'All Categories' },
+            { value: 'specific', label: 'Choose Specific' },
+            { value: 'special', label: 'Special Only' },
+          ]}
+        />
 
         {catSelection === 'specific' && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="max-h-48 overflow-y-auto rounded-lg border border-border-subtle bg-bg-tertiary p-3 scrollbar-thin">
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="max-h-56 overflow-y-auto rounded-lg border border-border-subtle bg-bg-tertiary p-2 scrollbar-thin">
             {categories.filter(c => !c.is_special).map(cat => (
-              <label key={cat.id} className="flex items-center gap-3 py-2 cursor-pointer hover:bg-white/5 rounded px-2 transition-colors">
+              <label key={cat.id} className="flex cursor-pointer items-center gap-3 rounded px-2 py-2 transition-colors hover:bg-white/5">
                 <input
                   type="checkbox"
                   checked={selectedCatIds.includes(cat.id)}
@@ -206,9 +189,9 @@ export default function PlaySetupPage() {
                   }}
                   className="w-4 h-4 rounded border-border-subtle bg-bg-quaternary text-accent-indigo accent-accent-indigo"
                 />
-                <span className="flex items-center gap-2 text-sm text-text-primary">
+                <span className="flex min-w-0 items-center gap-2 text-sm text-text-primary">
                   <CategoryIcon icon={cat.icon} className="h-4 w-4" />
-                  {cat.name}
+                  <span className="truncate">{cat.name}</span>
                 </span>
                 <span className="text-xs text-text-muted ml-auto">{cat.question_count}</span>
               </label>
@@ -222,11 +205,11 @@ export default function PlaySetupPage() {
         <h2 className="text-lg font-semibold text-text-primary">How Many Questions?</h2>
         <div className="flex flex-wrap gap-2">
           {COUNT_OPTIONS.map(opt => (
-            <button
+              <button
               key={opt.value}
               onClick={() => setCount(String(opt.value) as typeof count)}
               className={cn(
-                'px-4 py-2 rounded-lg text-sm font-medium transition-all',
+                'rounded-lg px-4 py-2 text-sm font-medium transition-all focus-ring',
                 count === String(opt.value) ? 'bg-accent-indigo text-white' : 'bg-bg-tertiary text-text-secondary hover:text-text-primary'
               )}
             >
@@ -236,7 +219,7 @@ export default function PlaySetupPage() {
           <button
             onClick={() => setCount('custom')}
             className={cn(
-              'px-4 py-2 rounded-lg text-sm font-medium transition-all',
+              'rounded-lg px-4 py-2 text-sm font-medium transition-all focus-ring',
               count === 'custom' ? 'bg-accent-indigo text-white' : 'bg-bg-tertiary text-text-secondary hover:text-text-primary'
             )}
           >
@@ -245,7 +228,7 @@ export default function PlaySetupPage() {
           <button
             onClick={() => setCount('infinity')}
             className={cn(
-              'px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5',
+              'flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-all focus-ring',
               count === 'infinity' ? 'bg-accent-indigo text-white' : 'bg-bg-tertiary text-text-secondary hover:text-text-primary'
             )}
           >
@@ -267,7 +250,7 @@ export default function PlaySetupPage() {
               min={1}
               max={999}
               className={cn(
-                'w-24 px-3 py-2 bg-bg-tertiary border rounded-lg text-text-primary text-sm focus:outline-none',
+                'field w-28 bg-bg-tertiary',
                 isCustomCountValid ? 'border-border-subtle focus:border-accent-indigo/50' : 'border-accent-red focus:border-accent-red'
               )}
             />
@@ -279,8 +262,8 @@ export default function PlaySetupPage() {
       </motion.div>
 
       {/* Summary + Start */}
-      <motion.div variants={itemVariants} className="fixed bottom-0 left-0 right-0 md:left-[240px] bg-bg-secondary/95 backdrop-blur-lg border-t border-border-subtle p-4 z-30">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
+      <motion.div variants={itemVariants} className="sticky bottom-[calc(5rem+env(safe-area-inset-bottom))] z-20 rounded-lg border border-border-subtle bg-bg-secondary/95 p-3 shadow-elevated backdrop-blur-lg md:bottom-4 md:p-4">
+        <div className="mx-auto flex max-w-2xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm">
             <p className="text-text-secondary">
               <span className="capitalize font-medium text-text-primary">{mode}</span> mode - {totalQuestions} questions - {count === 'infinity' ? 'infinity' : selectedQuestionCount ?? '--'} cards
@@ -293,7 +276,7 @@ export default function PlaySetupPage() {
             onClick={handleStart}
             disabled={isStarting || !hasEnoughQuestions}
             className={cn(
-              'flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all',
+              'flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium transition-all sm:w-auto',
               hasEnoughQuestions
                 ? 'bg-accent-green hover:bg-green-600 text-white shadow-glow-green'
                 : 'bg-bg-quaternary text-text-muted cursor-not-allowed'

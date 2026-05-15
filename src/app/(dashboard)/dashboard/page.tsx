@@ -5,14 +5,15 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   FolderOpen, Play, Map, BarChart2, Trophy,
-  Layers, Brain, BookOpen,
+  Layers, Brain, BookOpen, ArrowRight,
 } from 'lucide-react';
 import { getCategories } from '@/lib/actions/categories';
 import { getRecentSessions } from '@/lib/actions/sessions';
 import { Avatar } from '@/components/shared/Avatar';
 import { ProfileStats, SessionHistory } from '@/types/app';
 import { cn } from '@/lib/utils';
-import { LoadingState, StatCard } from '@/components/shared/AppShell';
+import { LoadingState, Panel, StatCard } from '@/components/shared/AppShell';
+import { Button } from '@/components/ui/button';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -103,23 +104,29 @@ export default function DashboardPage() {
       animate="visible"
       className="space-y-6"
     >
-      <motion.div
-        variants={itemVariants}
-        className="relative overflow-hidden rounded-lg border border-border-subtle bg-bg-tertiary p-6 shadow-card"
-      >
-        <div className="relative flex items-center gap-4">
+      <motion.div variants={itemVariants}>
+        <Panel className="relative overflow-hidden p-5 sm:p-6">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent-indigo/60 to-transparent" />
+          <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 items-center gap-4">
           <Avatar name={profile.display_name} color={profile.avatar_color} size="lg" />
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-text-primary">
+              <div className="min-w-0">
+                <h1 className="break-words text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
               Welcome back, {profile.display_name}!
             </h1>
-            <p className="text-text-secondary text-sm mt-0.5">Ready to master some flashcards?</p>
+                <p className="mt-1 text-sm text-text-secondary">Ready to master some flashcards?</p>
+              </div>
+            </div>
+            <Button onClick={() => router.push('/play')} className="h-10 bg-accent-green text-white hover:bg-accent-green/90">
+              <Play className="h-4 w-4 fill-current" />
+              Start studying
+            </Button>
           </div>
-        </div>
+        </Panel>
       </motion.div>
 
       {/* Quick Stats */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4">
         {[
           { icon: Layers, label: 'Questions', value: stats?.total_questions || 0, color: 'text-accent-indigo' },
           { icon: Brain, label: 'Smart Rate', value: `${stats?.smart_rate || 0}%`, color: 'text-accent-teal' },
@@ -134,8 +141,8 @@ export default function DashboardPage() {
 
       {/* Navigation Grid */}
       <motion.div variants={itemVariants}>
-        <h2 className="text-lg font-semibold text-text-primary mb-3">Quick Access</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <h2 className="mb-3 text-lg font-semibold text-text-primary">Quick Access</h2>
+        <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
           {navCards.map((card) => (
             <motion.button
               key={card.label}
@@ -143,11 +150,11 @@ export default function DashboardPage() {
               whileTap={{ scale: 0.98 }}
               onClick={() => router.push(card.href)}
               className={cn(
-                'bg-bg-tertiary rounded-xl p-6 flex flex-col items-center gap-3 shadow-card hover:shadow-elevated transition-all',
+                'panel surface-hover flex min-h-28 flex-col items-center justify-center gap-3 p-4 text-center focus-ring sm:min-h-32 sm:p-5',
                 card.highlight && 'ring-2 ring-emerald-400/30 bg-emerald-500/5'
               )}
             >
-              <card.icon className={cn('w-8 h-8', card.color, card.highlight && 'fill-current')} />
+              <card.icon className={cn('h-8 w-8', card.color, card.highlight && 'fill-current')} />
               <span className="text-sm font-medium text-text-primary">{card.label}</span>
             </motion.button>
           ))}
@@ -156,16 +163,22 @@ export default function DashboardPage() {
 
       {/* Recent Sessions */}
       <motion.div variants={itemVariants}>
-        <h2 className="text-lg font-semibold text-text-primary mb-3">Recent Sessions</h2>
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-text-primary">Recent Sessions</h2>
+          <Button variant="ghost" size="sm" onClick={() => router.push('/stats')} className="text-text-muted hover:text-text-primary">
+            View all
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
         {recentSessions.length === 0 ? (
-          <div className="bg-bg-tertiary rounded-xl p-8 text-center">
-            <BookOpen className="w-10 h-10 text-text-muted mx-auto mb-2" />
+          <Panel className="p-8 text-center">
+            <BookOpen className="mx-auto mb-2 h-10 w-10 text-text-muted" />
             <p className="text-text-secondary text-sm">No sessions yet. Start playing!</p>
-          </div>
+          </Panel>
         ) : (
-          <div className="bg-bg-tertiary rounded-xl overflow-hidden divide-y divide-border-subtle">
+          <div className="divide-y divide-border-subtle overflow-hidden rounded-lg border border-border-subtle bg-bg-tertiary">
             {recentSessions.map((session) => (
-              <div key={session.session_id} className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors">
+              <div key={session.session_id} className="flex flex-col gap-3 p-4 transition-colors hover:bg-white/5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   <div>
                     <span className={cn(
@@ -185,9 +198,9 @@ export default function DashboardPage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
+                <div className="flex flex-wrap items-center gap-3 sm:shrink-0">
                   <span className={cn(
-                    'text-sm font-medium',
+                    'font-mono text-sm font-medium tabular-nums',
                     session.points_earned > 0 ? 'text-accent-green' : 'text-text-secondary'
                   )}>
                     +{session.points_earned}

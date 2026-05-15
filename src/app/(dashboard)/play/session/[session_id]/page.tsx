@@ -210,11 +210,11 @@ export default function FlashcardSessionPage() {
   const isInfinity = session.is_infinity;
 
   return (
-    <div className="min-h-screen bg-bg-primary flex flex-col relative">
+    <div className="relative flex min-h-[calc(100svh-8rem)] flex-col overflow-hidden rounded-lg border border-border-subtle bg-bg-primary shadow-card md:min-h-[calc(100svh-3rem)]">
       {/* Top Bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
+      <div className="flex items-center justify-between border-b border-border-subtle px-3 py-3 sm:px-4">
         <div className="flex items-center gap-4">
-          <button onClick={() => setShowQuitConfirm(true)} className="p-2 hover:bg-white/5 rounded-lg text-text-muted hover:text-accent-red transition-colors">
+          <button onClick={() => setShowQuitConfirm(true)} className="rounded-lg p-2 text-text-muted transition-colors hover:bg-white/5 hover:text-accent-red focus-ring" aria-label="Quit session">
             <X className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2 text-sm">
@@ -250,7 +250,7 @@ export default function FlashcardSessionPage() {
       )}
 
       {/* Flashcard Area */}
-      <div className="flex-1 flex items-center justify-center px-4 py-6">
+      <div className="flex flex-1 items-center justify-center px-3 py-4 sm:px-4 sm:py-6">
         <div
           className="w-full max-w-2xl perspective-1000"
           onClick={handleFlip}
@@ -272,7 +272,7 @@ export default function FlashcardSessionPage() {
               animate={{ x: 0, opacity: 1, scale: 1 }}
               exit={{ x: -72, opacity: 0, scale: 0.96 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-              className="relative h-[440px] w-full"
+              className="relative h-[min(460px,calc(100svh-260px))] min-h-[320px] w-full"
             >
               <motion.div
                 className="preserve-3d relative h-full w-full"
@@ -281,7 +281,7 @@ export default function FlashcardSessionPage() {
               >
                 {/* Front */}
                 <div className="backface-hidden absolute inset-0">
-                  <div className="relative flex h-full cursor-pointer select-none flex-col overflow-hidden rounded-xl bg-card-surface p-6 text-slate-900 shadow-flashcard md:p-8">
+                  <div className="relative flex h-full cursor-pointer select-none flex-col overflow-hidden rounded-xl bg-card-surface p-5 text-slate-900 shadow-flashcard sm:p-6 md:p-8">
                   {/* Star */}
                   <button
                     onClick={(e) => { e.stopPropagation(); handleToggleSave(); }}
@@ -294,13 +294,13 @@ export default function FlashcardSessionPage() {
                       <p className="mb-2 text-xs font-semibold uppercase text-indigo-500">
                         Question
                       </p>
-                      <h1 className="text-2xl font-bold leading-snug text-slate-950 md:text-3xl">
+                      <h1 className="max-h-[260px] overflow-y-auto break-words text-xl font-bold leading-snug text-slate-950 sm:text-2xl md:text-3xl">
                         {currentQuestion.question}
                       </h1>
                     </div>
                     <div className="flex flex-1 items-center justify-center">
-                      <div className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-500">
-                        Click or press Space to reveal answer
+                      <div className="rounded-full border border-slate-200 px-4 py-2 text-center text-sm font-medium text-slate-500">
+                        Tap or press Space to reveal answer
                       </div>
                     </div>
                   </div>
@@ -308,7 +308,7 @@ export default function FlashcardSessionPage() {
 
                 {/* Back */}
                 <div className="backface-hidden rotate-y-180 absolute inset-0">
-                  <div className="relative flex h-full cursor-default select-none flex-col overflow-hidden rounded-xl bg-card-surface p-6 text-slate-900 shadow-flashcard md:p-8">
+                  <div className="relative flex h-full cursor-default select-none flex-col overflow-hidden rounded-xl bg-card-surface p-5 text-slate-900 shadow-flashcard sm:p-6 md:p-8">
                   <button
                     onClick={(e) => { e.stopPropagation(); handleToggleSave(); }}
                     className="absolute right-4 top-4 rounded-full p-2 text-slate-400 transition-colors hover:bg-black/5 hover:text-accent-gold"
@@ -320,12 +320,12 @@ export default function FlashcardSessionPage() {
                       <p className="mb-2 text-xs font-semibold uppercase text-indigo-500">
                         Question
                       </p>
-                      <h1 className="line-clamp-3 text-xl font-bold leading-snug text-slate-950 md:text-2xl">
+                      <h1 className="line-clamp-3 break-words text-lg font-bold leading-snug text-slate-950 sm:text-xl md:text-2xl">
                         {currentQuestion.question}
                       </h1>
                     </div>
-                    <div className="mt-6 flex flex-1 items-center justify-center rounded-xl border border-slate-200 bg-white/65 p-5">
-                      <p className="max-h-52 overflow-y-auto text-center text-xl font-medium leading-relaxed text-slate-800 md:text-2xl">
+                    <div className="mt-4 flex min-h-0 flex-1 items-center justify-center rounded-xl border border-slate-200 bg-white/65 p-4 sm:mt-6 sm:p-5">
+                      <p className="max-h-full overflow-y-auto break-words text-center text-lg font-medium leading-relaxed text-slate-800 sm:text-xl md:text-2xl">
                         {currentQuestion.answer}
                       </p>
                     </div>
@@ -348,9 +348,9 @@ export default function FlashcardSessionPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 60 }}
             transition={{ duration: 0.3 }}
-            className="px-4 pb-8 pt-2"
+            className="px-3 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-2 md:px-4 md:pb-6"
           >
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 max-w-xl mx-auto">
+            <div className="mx-auto grid max-w-xl grid-cols-2 gap-2 md:grid-cols-4">
               {RATING_BUTTONS.map((btn, i) => (
                 <motion.button
                   key={btn.key}
@@ -360,7 +360,7 @@ export default function FlashcardSessionPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleRate(btn.key)}
-                  className="relative flex flex-col items-center gap-1 py-4 px-3 rounded-xl transition-all hover:shadow-lg"
+                  className="relative flex min-h-20 flex-col items-center justify-center gap-1 rounded-lg px-3 py-3 transition-all hover:shadow-lg focus-ring"
                   style={{
                     backgroundColor: btn.bg,
                     boxShadow: `0 0 20px ${btn.color}20`,
@@ -390,14 +390,14 @@ export default function FlashcardSessionPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
             onClick={() => setShowQuitConfirm(false)}
           >
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="bg-bg-secondary rounded-xl p-6 max-w-sm w-full mx-4 shadow-elevated border border-border-subtle"
+              className="w-full max-w-sm rounded-lg border border-border-subtle bg-bg-secondary p-5 shadow-elevated sm:p-6"
               onClick={e => e.stopPropagation()}
             >
               <h2 className="text-xl font-semibold text-text-primary mb-2">Quit Session?</h2>
@@ -407,13 +407,13 @@ export default function FlashcardSessionPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowQuitConfirm(false)}
-                  className="flex-1 py-2.5 border border-border-subtle text-text-secondary rounded-lg hover:text-text-primary transition-colors"
+                  className="flex-1 rounded-lg border border-border-subtle py-2.5 text-text-secondary transition-colors hover:text-text-primary focus-ring"
                 >
                   Continue
                 </button>
                 <button
                   onClick={handleQuit}
-                  className="flex-1 py-2.5 bg-accent-red hover:bg-red-600 text-white rounded-lg transition-colors"
+                  className="flex-1 rounded-lg bg-accent-red py-2.5 text-white transition-colors hover:bg-red-600 focus-ring"
                 >
                   Quit
                 </button>

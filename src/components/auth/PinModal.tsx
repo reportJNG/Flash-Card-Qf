@@ -101,7 +101,7 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
           onClick={onClose}
         >
           <motion.div
@@ -109,11 +109,11 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
             animate={isShaking ? { x: [-10, 10, -10, 10, 0] } : { scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="mx-4 w-full max-w-sm rounded-lg border border-border-subtle bg-bg-secondary p-6 shadow-elevated"
+            className="max-h-[92vh] w-full max-w-sm overflow-y-auto rounded-lg border border-border-subtle bg-bg-secondary p-5 shadow-elevated sm:p-6"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-end mb-2">
-              <button onClick={onClose} className="text-text-muted hover:text-text-primary transition-colors">
+              <button onClick={onClose} className="rounded-lg p-1 text-text-muted transition-colors hover:text-text-primary focus-ring" aria-label="Close PIN dialog">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -152,7 +152,7 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
                   key={key}
                   onClick={() => handleKeyPress(key)}
                   disabled={isLocked}
-                  className="h-14 rounded-lg bg-bg-quaternary text-lg font-medium text-text-primary transition-colors hover:bg-bg-quaternary/80 disabled:opacity-50"
+                  className="h-14 rounded-lg bg-bg-quaternary text-lg font-medium text-text-primary transition-colors hover:bg-bg-quaternary/80 disabled:opacity-50 focus-ring"
                 >
                   {key}
                 </button>
@@ -160,21 +160,21 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
               <button
                 onClick={() => handleKeyPress('backspace')}
                 disabled={isLocked}
-                className="flex h-14 items-center justify-center rounded-lg bg-bg-quaternary text-text-primary transition-colors hover:bg-bg-quaternary/80 disabled:opacity-50"
+                className="flex h-14 items-center justify-center rounded-lg bg-bg-quaternary text-text-primary transition-colors hover:bg-bg-quaternary/80 disabled:opacity-50 focus-ring"
               >
                 <Delete className="w-5 h-5" />
               </button>
               <button
                 onClick={() => handleKeyPress('0')}
                 disabled={isLocked}
-                className="h-14 rounded-lg bg-bg-quaternary text-lg font-medium text-text-primary transition-colors hover:bg-bg-quaternary/80 disabled:opacity-50"
+                className="h-14 rounded-lg bg-bg-quaternary text-lg font-medium text-text-primary transition-colors hover:bg-bg-quaternary/80 disabled:opacity-50 focus-ring"
               >
                 0
               </button>
               <button
                 onClick={() => handleKeyPress('enter')}
                 disabled={isLocked || pin.length !== 4}
-                className="h-14 rounded-lg bg-accent-indigo text-lg font-medium text-white transition-colors hover:bg-accent-indigo/90 disabled:bg-bg-quaternary disabled:text-text-muted"
+                className="h-14 rounded-lg bg-accent-indigo text-lg font-medium text-white transition-colors hover:bg-accent-indigo/90 disabled:bg-bg-quaternary disabled:text-text-muted focus-ring"
               >
                 Go
               </button>

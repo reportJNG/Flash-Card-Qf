@@ -26,7 +26,7 @@ export function CategoryCard({ category, index, onClick, onEdit, onDelete }: Cat
       transition={{ duration: 0.35, delay: index * 0.05 }}
       whileHover={{ y: -4 }}
       className={cn(
-        'panel relative cursor-pointer p-5 transition-all duration-200 hover:-translate-y-1 hover:border-border-active hover:shadow-elevated',
+        'panel surface-hover relative min-w-0 cursor-pointer p-5 focus-within:border-border-active',
         category.is_special && 'border-accent-gold/35 bg-amber-500/5'
       )}
     >
@@ -48,7 +48,8 @@ export function CategoryCard({ category, index, onClick, onEdit, onDelete }: Cat
           </div>
           <button
             onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-            className="p-1 rounded-lg hover:bg-white/10 text-text-muted hover:text-text-primary transition-colors shrink-0"
+            className="focus-ring shrink-0 rounded-lg p-1 text-text-muted transition-colors hover:bg-white/10 hover:text-text-primary"
+            aria-label={`Open actions for ${category.name}`}
           >
             <MoreVertical className="w-4 h-4" />
           </button>
@@ -77,14 +78,14 @@ export function CategoryCard({ category, index, onClick, onEdit, onDelete }: Cat
           <div className="absolute right-4 top-12 z-20 min-w-[140px] rounded-lg border border-border-subtle bg-bg-quaternary py-1 shadow-elevated">
             <button
               onClick={(e) => { e.stopPropagation(); onEdit(); setShowMenu(false); }}
-              className="w-full text-left px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors"
+              className="w-full px-4 py-2 text-left text-sm text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary focus-ring"
             >
               Edit
             </button>
             {!category.is_special && (
               <button
                 onClick={(e) => { e.stopPropagation(); onDelete(); setShowMenu(false); }}
-                className="w-full text-left px-4 py-2 text-sm text-accent-red hover:bg-red-500/10 transition-colors"
+                className="w-full px-4 py-2 text-left text-sm text-accent-red transition-colors hover:bg-red-500/10 focus-ring"
               >
                 Delete
               </button>

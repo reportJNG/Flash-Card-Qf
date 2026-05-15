@@ -110,16 +110,16 @@ export default function SettingsPage() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-lg mx-auto space-y-6"
+      className="mx-auto max-w-2xl space-y-6"
     >
       <PageHeader title="Profile Settings" description="Manage your profile, PIN, and data cleanup." icon={AlertTriangle} />
 
       {/* Profile Section */}
-      <div className="panel space-y-5 p-6">
-        <div className="flex items-center gap-4 mb-2">
+      <div className="panel space-y-5 p-5 sm:p-6">
+          <div className="mb-2 flex min-w-0 items-center gap-4">
           <Avatar name={displayName || profile.display_name} color={selectedColor} size="lg" />
-          <div>
-            <p className="text-lg font-semibold text-text-primary">{displayName || profile.display_name}</p>
+          <div className="min-w-0">
+            <p className="truncate text-lg font-semibold text-text-primary">{displayName || profile.display_name}</p>
           </div>
         </div>
 
@@ -128,7 +128,7 @@ export default function SettingsPage() {
           <input
             value={displayName}
             onChange={e => setDisplayName(e.target.value)}
-            className="w-full px-3 py-2 bg-bg-quaternary border border-border-subtle rounded-lg text-text-primary text-sm focus:outline-none focus:border-accent-indigo/50"
+            className="field"
             maxLength={50}
           />
         </div>
@@ -141,7 +141,7 @@ export default function SettingsPage() {
                 key={color}
                 onClick={() => setSelectedColor(color)}
                 className={cn(
-                  'w-8 h-8 rounded-full transition-all duration-200',
+                  'h-8 w-8 rounded-full transition-all duration-200 focus-ring',
                   selectedColor === color && 'ring-2 ring-white ring-offset-2 ring-offset-bg-tertiary scale-110'
                 )}
                 style={{ backgroundColor: color }}
@@ -162,12 +162,12 @@ export default function SettingsPage() {
             placeholder={profile.hasPin ? 'Enter new PIN (4 digits)' : 'Set a 4-digit PIN'}
             type="password"
             maxLength={4}
-            className="w-full px-3 py-2 bg-bg-quaternary border border-border-subtle rounded-lg text-text-primary text-sm focus:outline-none focus:border-accent-indigo/50"
+            className="field"
           />
           {profile.hasPin && (
             <button
               onClick={handleRemovePin}
-              className="text-sm text-accent-red hover:underline mt-1"
+              className="mt-1 rounded text-sm text-accent-red hover:underline focus-ring"
             >
               Remove PIN
             </button>
@@ -177,41 +177,41 @@ export default function SettingsPage() {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="w-full py-2.5 bg-accent-indigo hover:bg-indigo-600 disabled:bg-bg-quaternary text-white rounded-lg transition-colors text-sm font-medium"
+          className="w-full rounded-lg bg-accent-indigo py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-600 disabled:bg-bg-quaternary focus-ring"
         >
           {isSaving ? 'Saving...' : 'Save Changes'}
         </button>
       </div>
 
       {/* Danger Zone */}
-      <div className="space-y-4 rounded-lg border border-accent-red/20 bg-bg-tertiary p-6 shadow-card">
+      <div className="space-y-4 rounded-lg border border-accent-red/20 bg-bg-tertiary p-5 shadow-card sm:p-6">
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle className="w-5 h-5 text-accent-red" />
           <h2 className="text-lg font-semibold text-accent-red">Danger Zone</h2>
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-text-primary">Delete All Questions</p>
               <p className="text-xs text-text-muted">Remove all questions across all categories</p>
             </div>
             <button
               onClick={() => setShowDeleteQuestions(true)}
-              className="px-4 py-2 border border-accent-red text-accent-red rounded-lg hover:bg-red-500/10 transition-colors text-sm"
+              className="rounded-lg border border-accent-red px-4 py-2 text-sm text-accent-red transition-colors hover:bg-red-500/10 focus-ring"
             >
               Delete
             </button>
           </div>
 
-          <div className="border-t border-border-subtle pt-3 flex items-center justify-between">
+          <div className="flex flex-col gap-3 border-t border-border-subtle pt-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-text-primary">Delete Profile</p>
               <p className="text-xs text-text-muted">Permanently delete your profile and all data</p>
             </div>
             <button
               onClick={() => setShowDeleteProfile(true)}
-              className="px-4 py-2 bg-accent-red hover:bg-red-600 text-white rounded-lg transition-colors text-sm"
+              className="rounded-lg bg-accent-red px-4 py-2 text-sm text-white transition-colors hover:bg-red-600 focus-ring"
             >
               Delete
             </button>

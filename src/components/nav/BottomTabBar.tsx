@@ -20,14 +20,22 @@ export function BottomTabBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-bg-secondary/95 backdrop-blur-lg border-t border-border-subtle z-50 flex items-center justify-around px-2 safe-area-pb">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle bg-bg-secondary/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:hidden">
+      <div className="mx-auto flex min-h-16 max-w-lg items-center justify-around gap-1">
       {navItems.map((item) => {
         const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
         return (
-          <Link key={item.href} href={item.href} className="flex flex-col items-center gap-0.5 py-1 px-2 min-w-[56px]">
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              'flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 transition-colors focus-ring',
+              isActive && (item.highlight ? 'bg-emerald-500/10' : 'bg-accent-indigo/10')
+            )}
+          >
             <item.icon
               className={cn(
-                'w-5 h-5 transition-colors',
+                'h-5 w-5 transition-colors',
                 isActive
                   ? item.highlight
                     ? 'text-emerald-400'
@@ -37,7 +45,7 @@ export function BottomTabBar() {
             />
             <span
               className={cn(
-                'text-[10px] transition-colors',
+                'max-w-full truncate text-[10px] transition-colors',
                 isActive
                   ? item.highlight
                     ? 'text-emerald-400'
@@ -50,6 +58,7 @@ export function BottomTabBar() {
           </Link>
         );
       })}
+      </div>
     </nav>
   );
 }

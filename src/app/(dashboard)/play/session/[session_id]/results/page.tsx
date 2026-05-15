@@ -80,10 +80,10 @@ export default function ResultsPage() {
   ].filter(s => s.count > 0);
 
   return (
-    <div className="min-h-screen bg-bg-primary px-4 py-8">
+    <div className="min-h-[calc(100svh-8rem)] rounded-lg border border-border-subtle bg-bg-primary px-4 py-6 shadow-card md:min-h-[calc(100svh-3rem)] md:py-8">
       <div className="mx-auto max-w-lg space-y-8">
         {/* Back */}
-        <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm">
+        <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 rounded-lg text-sm text-text-muted transition-colors hover:text-text-primary focus-ring">
           <ArrowLeft className="w-4 h-4" />
           Dashboard
         </button>
@@ -117,7 +117,7 @@ export default function ResultsPage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="h-8 bg-bg-tertiary rounded-full overflow-hidden flex">
+          <div className="flex h-8 overflow-hidden rounded-full bg-bg-tertiary">
             {segments.map((seg, i) => (
               <motion.div
                 key={seg.key}
@@ -144,7 +144,7 @@ export default function ResultsPage() {
               </motion.div>
             ))}
           </div>
-          <div className="flex justify-center gap-4 mt-2">
+          <div className="mt-2 flex flex-wrap justify-center gap-4">
             {segments.map(seg => (
               <div key={seg.key} className="flex items-center gap-1.5 text-xs">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: seg.color }} />
@@ -180,16 +180,16 @@ export default function ResultsPage() {
           className="space-y-2"
         >
           <h2 className="text-lg font-semibold text-text-primary">Question Review</h2>
-          <div className="space-y-2 max-h-64 overflow-y-auto scrollbar-thin">
+          <div className="max-h-64 space-y-2 overflow-y-auto scrollbar-thin">
             {answers.map((a, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 + i * 0.03 }}
-                className="flex items-center justify-between rounded-lg border border-border-subtle bg-bg-tertiary p-3"
+                className="flex flex-col gap-2 rounded-lg border border-border-subtle bg-bg-tertiary p-3 sm:flex-row sm:items-center sm:justify-between"
               >
-                <p className="text-sm text-text-primary truncate flex-1 mr-3">{a.question}</p>
+                <p className="mr-3 min-w-0 flex-1 break-words text-sm text-text-primary sm:truncate">{a.question}</p>
                 <div className="flex items-center gap-2 shrink-0">
                   <span
                     className="text-xs font-medium px-2 py-0.5 rounded-full capitalize"
@@ -214,25 +214,25 @@ export default function ResultsPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="flex flex-col sm:flex-row gap-3"
+            className="flex flex-col gap-3 sm:flex-row"
         >
           <button
             onClick={() => router.push('/play')}
-            className="flex items-center justify-center gap-2 px-6 py-3 border border-accent-indigo text-accent-indigo rounded-xl hover:bg-accent-indigo/10 transition-colors"
+            className="flex items-center justify-center gap-2 rounded-lg border border-accent-indigo px-6 py-3 text-accent-indigo transition-colors hover:bg-accent-indigo/10"
           >
             <RefreshCw className="w-4 h-4" />
             Play Again
           </button>
           <button
             onClick={() => router.push('/play')}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-accent-indigo hover:bg-indigo-600 text-white rounded-xl transition-colors"
+            className="flex items-center justify-center gap-2 rounded-lg bg-accent-indigo px-6 py-3 text-white transition-colors hover:bg-accent-indigo/90"
           >
             <Sliders className="w-4 h-4" />
             New Setup
           </button>
           <button
             onClick={() => router.push('/dashboard')}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-bg-tertiary text-text-primary rounded-xl hover:bg-bg-quaternary transition-colors"
+            className="flex items-center justify-center gap-2 rounded-lg bg-bg-tertiary px-6 py-3 text-text-primary transition-colors hover:bg-bg-quaternary"
           >
             <Home className="w-4 h-4" />
             Dashboard

@@ -12,6 +12,7 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { Profile } from '@/types/app';
 import toast from 'react-hot-toast';
 import { LoadingState } from '@/components/shared/AppShell';
+import { Button } from '@/components/ui/button';
 
 export default function LoginPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -78,7 +79,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-bg-primary p-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-bg-primary px-4 py-8 sm:p-6">
       {/* Logo */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -89,7 +90,7 @@ export default function LoginPage() {
         <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl border border-border-subtle bg-bg-tertiary shadow-card">
           <Layers className="h-7 w-7 text-accent-indigo" />
         </div>
-        <h1 className="mb-2 text-5xl font-semibold tracking-tight text-gradient">FlashQF</h1>
+        <h1 className="mb-2 text-4xl font-semibold tracking-tight text-gradient sm:text-5xl">FlashQF</h1>
         <p className="text-xs uppercase tracking-[0.2em] text-text-muted">Flip. Rate. Master.</p>
       </motion.div>
 
@@ -104,13 +105,14 @@ export default function LoginPage() {
             title="No profiles yet"
             description="Create your first profile to get started with FlashQF"
             action={
-              <button
+              <Button
                 onClick={() => setShowCreateModal(true)}
-                className="px-8 py-4 bg-accent-indigo hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors flex items-center gap-2"
+                size="lg"
+                className="h-12 bg-accent-indigo px-6 text-white hover:bg-indigo-600"
               >
                 <Plus className="w-5 h-5" />
                 Create First Profile
-              </button>
+              </Button>
             }
           />
         </motion.div>
@@ -120,7 +122,7 @@ export default function LoginPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-text-secondary mb-6"
+            className="mb-6 text-text-secondary"
           >
             Select a profile to continue
           </motion.p>
@@ -147,7 +149,8 @@ export default function LoginPage() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowCreateModal(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-accent-indigo hover:bg-indigo-600 text-white rounded-full shadow-glow-sm flex items-center justify-center transition-colors z-30"
+          className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-accent-indigo text-white shadow-glow-sm transition-colors hover:bg-indigo-600 focus-ring"
+          aria-label="Create profile"
         >
           <Plus className="w-6 h-6" />
         </motion.button>

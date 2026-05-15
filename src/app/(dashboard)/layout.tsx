@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { verifySession } from '@/lib/utils/session';
 import { Sidebar } from '@/components/nav/Sidebar';
 import { BottomTabBar } from '@/components/nav/BottomTabBar';
+import { PageContainer } from '@/components/shared/AppShell';
 
 export default async function DashboardLayout({
   children,
@@ -24,10 +25,10 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-bg-secondary">
       <Sidebar profile={{ display_name: session.display_name, avatar_color: session.avatar_color }} />
-      <main className="md:ml-[240px] min-h-screen pb-20 md:pb-0">
-        <div className="mx-auto max-w-6xl animate-fade-up p-4 md:p-6 lg:p-8">
+      <main className="min-h-screen pb-[calc(5rem+env(safe-area-inset-bottom))] transition-[margin] duration-200 md:ml-[var(--flashqf-sidebar-width,240px)] md:pb-0">
+        <PageContainer>
           {children}
-        </div>
+        </PageContainer>
       </main>
       <BottomTabBar />
     </div>

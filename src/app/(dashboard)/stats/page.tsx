@@ -8,7 +8,7 @@ import { getSessionHistory } from '@/lib/actions/sessions';
 import { CategoryOverview, SessionHistory, DIFFICULTY_COLORS } from '@/types/app';
 import { MiniDifficultyBar } from '@/components/shared/MiniDifficultyBar';
 import { cn } from '@/lib/utils';
-import { LoadingState, PageHeader } from '@/components/shared/AppShell';
+import { LoadingState, MobileCardList, PageHeader } from '@/components/shared/AppShell';
 import { CategoryIcon } from '@/lib/category-icons';
 
 function AnimatedStat({ value, suffix = '' }: { value: number; suffix?: string }) {
@@ -186,7 +186,7 @@ export default function StatsPage() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="grid grid-cols-2 md:grid-cols-5 gap-3"
+        className="grid grid-cols-1 gap-3 xs:grid-cols-2 md:grid-cols-5"
       >
         {[
           { icon: Layers, label: 'Questions', value: totalQuestions, color: 'text-accent-indigo' },
@@ -200,7 +200,7 @@ export default function StatsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
-            className="bg-bg-tertiary rounded-xl p-4 shadow-card"
+          className="panel min-w-0 p-4"
           >
             <stat.icon className={`w-5 h-5 ${stat.color} mb-2`} />
             <p className="text-2xl font-bold text-text-primary">
@@ -217,7 +217,7 @@ export default function StatsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-bg-tertiary rounded-xl p-6 shadow-card flex flex-col items-center"
+          className="panel flex flex-col items-center p-5 sm:p-6"
         >
           <h2 className="text-lg font-semibold text-text-primary mb-4">Smart Rate</h2>
           <SmartRateGauge percentage={smartRate} />
@@ -228,7 +228,7 @@ export default function StatsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-bg-tertiary rounded-xl p-6 shadow-card"
+          className="panel p-5 sm:p-6"
         >
           <h2 className="text-lg font-semibold text-text-primary mb-4">Difficulty Breakdown</h2>
           <DifficultyDonut counts={difficultyCounts} />
@@ -240,12 +240,12 @@ export default function StatsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="bg-bg-tertiary rounded-xl p-6 shadow-card"
+        className="panel p-5 sm:p-6"
       >
         <h2 className="text-lg font-semibold text-text-primary mb-4">Per-Category Mastery</h2>
         <div className="space-y-3">
           {categories.map((cat) => (
-            <div key={cat.id} className="flex items-center gap-3">
+            <div key={cat.id} className="flex items-center gap-3 min-w-0">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border-subtle bg-bg-quaternary" style={{ color: cat.color }}>
                 <CategoryIcon icon={cat.icon} className="h-4 w-4" />
               </div>
@@ -277,14 +277,48 @@ export default function StatsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="bg-bg-tertiary rounded-xl shadow-card overflow-hidden"
+        className="panel overflow-hidden"
       >
         <h2 className="text-lg font-semibold text-text-primary p-6 pb-4">Session History</h2>
         {sessions.length === 0 ? (
           <p className="text-center text-text-muted py-8">No sessions yet</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <>
+          <MobileCardList className="px-3 pb-3">
+            {sessions.slice(0, 20).map((sess) => (
+              <div key={sess.session_id} className="rounded-lg border border-border-subtle bg-bg-secondary p-3">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <span className="text-sm font-medium text-text-primary">
+                    {new Date(sess.started_at).toLocaleDateString()}
+                  </span>
+                  <span className={cn(
+                    'inline-flex rounded-full px-2 py-0.5 text-xs font-medium',
+                    sess.mode === 'hard' ? 'bg-orange-500/15 text-accent-orange' : 'bg-indigo-500/15 text-accent-indigo'
+                  )}>
+                    {sess.mode}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-sm">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-text-muted">Answered</p>
+                    <p className="font-mono text-text-primary">{sess.total_answered}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-text-muted">Points</p>
+                    <p className="font-mono text-accent-gold">{sess.points_earned}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-text-muted">Status</p>
+                    <p className={cn('truncate text-xs capitalize', sess.status === 'completed' ? 'text-accent-green' : 'text-accent-gold')}>
+                      {sess.status}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </MobileCardList>
+          <div className="hidden overflow-x-auto md:block">
+            <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="bg-bg-quaternary text-left">
                   <th className="px-4 py-3 text-xs text-text-muted font-medium uppercase">Date</th>
@@ -330,6 +364,7 @@ export default function StatsPage() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </motion.div>
     </div>
