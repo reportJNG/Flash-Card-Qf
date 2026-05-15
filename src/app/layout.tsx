@@ -6,7 +6,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'FlashQF — Flip. Rate. Master.',
+  title: 'FlashQF',
   description: 'Personal flashcard study application',
 };
 

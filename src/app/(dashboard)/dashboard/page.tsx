@@ -54,7 +54,8 @@ export default function DashboardPage() {
           getRecentSessions(session.profile_id, 5),
         ]);
 
-        if (sessionsRes.success) setRecentSessions(sessionsRes.data || []);
+        const loadedSessions = sessionsRes.success ? sessionsRes.data || [] : [];
+        setRecentSessions(loadedSessions);
 
         // Calculate stats from categories
         const totalQuestions = catsRes.data?.reduce((sum, c) => sum + c.question_count, 0) || 0;
@@ -75,7 +76,7 @@ export default function DashboardPage() {
           hard_count: catsRes.data?.reduce((sum, c) => sum + c.hard_count, 0) || 0,
           super_hard_count: catsRes.data?.reduce((sum, c) => sum + c.super_hard_count, 0) || 0,
           total_categories: catsRes.data?.length || 0,
-          total_sessions: recentSessions.length,
+          total_sessions: loadedSessions.length,
           total_answers: 0,
           smart_rate: smartRate,
         });

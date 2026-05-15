@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
+import { getSessionSecret } from '@/lib/env';
 
-const SECRET = new TextEncoder().encode(process.env.SESSION_SECRET!);
+const SECRET = new TextEncoder().encode(getSessionSecret());
 const COOKIE_NAME = 'flashqf_session';
 
 export async function middleware(request: NextRequest) {

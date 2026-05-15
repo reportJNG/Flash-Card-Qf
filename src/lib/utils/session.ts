@@ -1,7 +1,8 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+import { getSessionSecret } from '@/lib/env';
 
-const SECRET = new TextEncoder().encode(process.env.SESSION_SECRET!);
+const SECRET = new TextEncoder().encode(getSessionSecret());
 const COOKIE_NAME = 'flashqf_session';
 
 export interface SessionPayload {
