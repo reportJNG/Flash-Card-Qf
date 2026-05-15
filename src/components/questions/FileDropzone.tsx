@@ -15,7 +15,9 @@ export function FileDropzone({ onParse }: FileDropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleFile = useCallback(async (file: File) => {
-    if (!file.name.endsWith('.md') && !file.name.endsWith('.txt')) {
+    const fileName = file.name.toLowerCase();
+
+    if (!fileName.endsWith('.md') && !fileName.endsWith('.txt')) {
       toast.error('Only .md and .txt files are supported');
       return;
     }
@@ -23,7 +25,7 @@ export function FileDropzone({ onParse }: FileDropzoneProps) {
     const content = await file.text();
     let pairs: ParsedQAPair[];
 
-    if (file.name.endsWith('.md')) {
+    if (fileName.endsWith('.md')) {
       pairs = parseMdFile(content);
     } else {
       pairs = parseTxtFile(content);

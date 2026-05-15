@@ -56,15 +56,52 @@ export default function PlaySetupPage() {
     loadCategories();
   }, [loadCategories]);
 
-  const selectedQuestionCount = count === 'infinity' ? null : count === 'custom' ? parseInt(customCount) || 10 : parseInt(count);
+  const customCountNumber = Number(customCount);
+  const isCustomCountValid = count !== 'custom'
+    || (Number.isInteger(customCountNumber) && customCountNumber >= 1 && customCountNumber <= 999);
+  const selectedQuestionCount = count === 'infinity'
+    ? null
+    : count === 'custom'
+    ? isCustomCountValid ? customCountNumber : null
+    : parseInt(count);
   const selectedCats = catSelection === 'all' ? [] : catSelection === 'special' ? categories.filter(c => c.is_special).map(c => c.id) : selectedCatIds;
   const totalQuestions = catSelection === 'all'
     ? categories.reduce((sum, c) => sum + c.question_count, 0)
     : catSelection === 'special'
     ? categories.find(c => c.is_special)?.question_count || 0
     : categories.filter(c => selectedCatIds.includes(c.id)).reduce((sum, c) => sum + c.question_count, 0);
+  const hasSelectedSpecificCategory = catSelection !== 'specific' || selectedCatIds.length > 0;
+  const hasEnoughQuestions = Boolean(profileId) && hasSelectedSpecificCategory && totalQuestions > 0 && isCustomCountValid;
+  const startLabel = isStarting
+    ? 'Starting...'
+    : !profileId
+    ? 'Loading...'
+    : !hasSelectedSpecificCategory
+    ? 'Select category'
+    : !isCustomCountValid
+    ? 'Invalid count'
+    : hasEnoughQuestions
+    ? 'Start'
+    : 'No questions';
 
   const handleStart = async () => {
+    if (!profileId) {
+      toast.error('Profile is still loading');
+      return;
+    }
+    if (!hasSelectedSpecificCategory) {
+      toast.error('Select at least one category');
+      return;
+    }
+    if (!isCustomCountValid || (count !== 'infinity' && selectedQuestionCount === null)) {
+      toast.error('Enter a question count from 1 to 999');
+      return;
+    }
+    if (totalQuestions <= 0) {
+      toast.error('No questions found for this selection');
+      return;
+    }
+
     setIsStarting(true);
     try {
       const result = await createSession(profileId, {
@@ -86,8 +123,6 @@ export default function PlaySetupPage() {
       setIsStarting(false);
     }
   };
-
-  const hasEnoughQuestions = totalQuestions > 0;
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-2xl mx-auto space-y-8 pb-24">
@@ -119,7 +154,7 @@ export default function PlaySetupPage() {
           >
             <Zap className={cn('w-6 h-6 mb-2', mode === 'hard' ? 'text-accent-orange' : 'text-text-muted')} />
             <p className={cn('font-medium', mode === 'hard' ? 'text-text-primary' : 'text-text-secondary')}>Hard Mode</p>
-            <p className="text-xs text-text-muted mt-1">Targets weak spots: Super Hard → Hard → New → Good → Easy.</p>
+            <p className="text-xs text-text-muted mt-1">Targets weak spots: Super Hard -&gt; Hard -&gt; New -&gt; Good -&gt; Easy.</p>
           </button>
         </div>
       </motion.div>
@@ -131,7 +166,7 @@ export default function PlaySetupPage() {
           {[
             { key: 'all' as const, label: 'All Categories', desc: 'Random across everything' },
             { key: 'specific' as const, label: 'Choose Specific', desc: 'Select one or more categories' },
-            { key: 'special' as const, label: '⭐ Special Only', desc: 'Only saved star questions' },
+            { key: 'special' as const, label: 'Special Only', desc: 'Only saved star questions' },
           ].map(opt => (
             <button
               key={opt.key}
@@ -219,10 +254,21 @@ export default function PlaySetupPage() {
               type="number"
               value={customCount}
               onChange={e => setCustomCount(e.target.value)}
+              onBlur={() => {
+                if (!customCount) return;
+                const next = Math.max(1, Math.min(999, Number(customCount)));
+                if (Number.isFinite(next)) setCustomCount(String(Math.trunc(next)));
+              }}
               min={1}
               max={999}
-              className="w-24 px-3 py-2 bg-bg-tertiary border border-border-subtle rounded-lg text-text-primary text-sm focus:outline-none focus:border-accent-indigo/50"
+              className={cn(
+                'w-24 px-3 py-2 bg-bg-tertiary border rounded-lg text-text-primary text-sm focus:outline-none',
+                isCustomCountValid ? 'border-border-subtle focus:border-accent-indigo/50' : 'border-accent-red focus:border-accent-red'
+              )}
             />
+            {!isCustomCountValid && (
+              <p className="text-xs text-accent-red mt-2">Enter a number from 1 to 999.</p>
+            )}
           </motion.div>
         )}
       </motion.div>
@@ -232,10 +278,10 @@ export default function PlaySetupPage() {
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="text-sm">
             <p className="text-text-secondary">
-              <span className="capitalize font-medium text-text-primary">{mode}</span> mode • {totalQuestions} questions • {count === 'infinity' ? '∞' : selectedQuestionCount} cards
+              <span className="capitalize font-medium text-text-primary">{mode}</span> mode - {totalQuestions} questions - {count === 'infinity' ? 'infinity' : selectedQuestionCount ?? '--'} cards
             </p>
             <p className="text-xs text-text-muted">
-              Estimated: 0–{count === 'infinity' ? '∞' : (selectedQuestionCount || 0) * 10} pts
+              Estimated: 0-{count === 'infinity' ? 'infinity' : (selectedQuestionCount || 0) * 10} pts
             </p>
           </div>
           <button
@@ -249,7 +295,7 @@ export default function PlaySetupPage() {
             )}
           >
             <Play className="w-5 h-5 fill-current" />
-            {isStarting ? 'Starting...' : hasEnoughQuestions ? 'Start' : 'No questions'}
+            {startLabel}
           </button>
         </div>
       </motion.div>

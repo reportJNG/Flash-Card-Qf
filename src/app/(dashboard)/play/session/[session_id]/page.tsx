@@ -2,11 +2,11 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, X, Infinity, Star } from 'lucide-react';
-import { getSessionById, closeSession, recordAnswer, refreshQueue } from '@/lib/actions/sessions';
+import { answerSessionCard, getSessionCurrentQuestion, closeSession } from '@/lib/actions/sessions';
 import { toggleSaveToSpecial } from '@/lib/actions/questions';
 import { PlaySession, Question } from '@/types/app';
 import { cn } from '@/lib/utils';
@@ -40,6 +40,7 @@ export default function FlashcardSessionPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [loopPulse, setLoopPulse] = useState(false);
   const [loading, setLoading] = useState(true);
+  const ratingLockRef = useRef(false);
 
   const loadSession = useCallback(async () => {
     try {
@@ -48,14 +49,14 @@ export default function FlashcardSessionPage() {
       const profileSession = await sessionRes.json();
       setProfileId(profileSession.profile_id);
 
-      const result = await getSessionById(sessionId);
+      const result = await getSessionCurrentQuestion(sessionId);
       if (!result.success || !result.data) {
-        toast.error('Session not found');
+        toast.error(result.error || 'Session not found');
         router.push('/play');
         return;
       }
 
-      const s = result.data;
+      const { session: s, question } = result.data;
       setSession(s);
 
       if (s.status !== 'active') {
@@ -67,21 +68,14 @@ export default function FlashcardSessionPage() {
       setCurrentIndex(s.current_index);
       setSessionPoints(s.points_earned);
 
-      // Load current question
-      const qIndex = s.current_index;
-      if (qIndex < s.question_queue.length) {
-        const supabase = (await import('@/lib/supabase/client')).createClient();
-        const { data: qData } = await supabase
-          .from('questions')
-          .select('*')
-          .eq('id', s.question_queue[qIndex])
-          .single();
-        if (qData) {
-          setCurrentQuestion(qData);
-          setIsSaved(qData.is_saved_special);
-        }
+      if (question) {
+        setCurrentQuestion(question);
+        setIsSaved(question.is_saved_special);
+      } else {
+        toast.error('No current question found');
       }
-    } catch {
+    } catch (error) {
+      console.error('Failed to load session', error);
       toast.error('Failed to load session');
     } finally {
       setLoading(false);
@@ -92,6 +86,13 @@ export default function FlashcardSessionPage() {
     loadSession();
   }, [loadSession]);
 
+  const revealAnswer = useCallback(() => {
+    if (isFlipped || isTransitioning || loading || !currentQuestion) return;
+
+    setIsFlipped(true);
+    window.setTimeout(() => setShowRatings(true), 360);
+  }, [currentQuestion, isFlipped, isTransitioning, loading]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = async (e: KeyboardEvent) => {
@@ -99,10 +100,7 @@ export default function FlashcardSessionPage() {
 
       if (e.key === ' ' || e.key === 'Enter') {
         e.preventDefault();
-        if (!isFlipped) {
-          setIsFlipped(true);
-          setTimeout(() => setShowRatings(true), 300);
-        }
+        revealAnswer();
         return;
       }
 
@@ -118,81 +116,64 @@ export default function FlashcardSessionPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFlipped, showRatings, isTransitioning, currentQuestion, loading]);
+  }, [isFlipped, showRatings, isTransitioning, currentQuestion, loading, revealAnswer]);
 
   const handleRate = async (result: 'easy' | 'good' | 'hard' | 'super_hard') => {
-    if (!session || !currentQuestion || isTransitioning) return;
+    if (!session || !currentQuestion || isTransitioning || ratingLockRef.current) return;
+    ratingLockRef.current = true;
     setIsTransitioning(true);
 
-    // Record answer
-    await recordAnswer(sessionId, profileId, currentQuestion.id, result);
-
-    const newPoints = sessionPoints + POINTS[result];
-    setSessionPoints(newPoints);
-
-    // Move to next card
-    const nextIndex = currentIndex + 1;
-
     setTimeout(async () => {
-      setShowRatings(false);
-      setIsFlipped(false);
+      try {
+        const answerResult = await answerSessionCard(sessionId, result);
 
-      if (nextIndex >= queue.length) {
-        if (session.is_infinity) {
-          // Refresh queue for infinity mode
-          setLoopPulse(true);
-          setTimeout(() => setLoopPulse(false), 600);
+        if (!answerResult.success || !answerResult.data) {
+          toast.error(answerResult.error || 'Failed to record answer');
+          ratingLockRef.current = false;
+          setIsTransitioning(false);
+          return;
+        }
 
-          const refreshResult = await refreshQueue(sessionId, profileId, session.mode, session.category_ids);
-          if (refreshResult.success && refreshResult.data) {
-            setQueue(refreshResult.data);
-            setCurrentIndex(0);
+        const next = answerResult.data;
+        setSession(next.session);
+        setQueue(next.session.question_queue);
+        setCurrentIndex(next.session.current_index);
+        setSessionPoints(next.session.points_earned);
+        setShowRatings(false);
+        setIsFlipped(false);
 
-            // Load first question of new queue
-            const supabase = (await import('@/lib/supabase/client')).createClient();
-            const { data: qData } = await supabase
-              .from('questions')
-              .select('*')
-              .eq('id', refreshResult.data[0])
-              .single();
-            if (qData) {
-              setCurrentQuestion(qData);
-              setIsSaved(qData.is_saved_special);
-              setCardKey(k => k + 1);
-            }
-          }
-        } else {
-          // End session
-          await closeSession(sessionId, 'completed');
+        if (next.completed) {
           router.push(`/play/session/${sessionId}/results`);
           return;
         }
-      } else {
-        setCurrentIndex(nextIndex);
 
-        // Load next question
-        const supabase = (await import('@/lib/supabase/client')).createClient();
-        const { data: qData } = await supabase
-          .from('questions')
-          .select('*')
-          .eq('id', queue[nextIndex])
-          .single();
-        if (qData) {
-          setCurrentQuestion(qData);
-          setIsSaved(qData.is_saved_special);
-          setCardKey(k => k + 1);
+        if (!next.question) {
+          toast.error('No next question found');
+          ratingLockRef.current = false;
+          setIsTransitioning(false);
+          return;
         }
-      }
 
-      setIsTransitioning(false);
+        if (next.refreshedQueue) {
+          setLoopPulse(true);
+          setTimeout(() => setLoopPulse(false), 600);
+        }
+
+        setCurrentQuestion(next.question);
+        setIsSaved(next.question.is_saved_special);
+        setCardKey(k => k + 1);
+        ratingLockRef.current = false;
+        setIsTransitioning(false);
+      } catch {
+        toast.error('Failed to record answer');
+        ratingLockRef.current = false;
+        setIsTransitioning(false);
+      }
     }, 250);
   };
 
   const handleFlip = () => {
-    if (!isFlipped && !isTransitioning) {
-      setIsFlipped(true);
-      setTimeout(() => setShowRatings(true), 300);
-    }
+    revealAnswer();
   };
 
   const handleToggleSave = async () => {
@@ -273,52 +254,90 @@ export default function FlashcardSessionPage() {
 
       {/* Flashcard Area */}
       <div className="flex-1 flex items-center justify-center px-4 py-6">
-        <div className="w-full max-w-xl perspective-1000" onClick={handleFlip}>
+        <div
+          className="w-full max-w-2xl perspective-1000"
+          onClick={handleFlip}
+          onKeyDown={(e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              e.preventDefault();
+              e.stopPropagation();
+              revealAnswer();
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label={isFlipped ? 'Answer shown' : 'Reveal answer'}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={cardKey}
-              initial={{ x: 100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -100, opacity: 0 }}
+              initial={{ x: 72, opacity: 0, scale: 0.96 }}
+              animate={{ x: 0, opacity: 1, scale: 1 }}
+              exit={{ x: -72, opacity: 0, scale: 0.96 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-              className="preserve-3d relative w-full"
-              style={{
-                transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                transition: 'transform 400ms ease-in-out',
-              }}
+              className="relative h-[440px] w-full"
             >
-              {/* Front */}
-              <div className="backface-hidden relative">
-                <div className="bg-card-surface rounded-2xl shadow-flashcard p-8 md:p-12 min-h-[360px] flex flex-col items-center justify-center cursor-pointer select-none">
+              <motion.div
+                className="preserve-3d relative h-full w-full"
+                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {/* Front */}
+                <div className="backface-hidden absolute inset-0">
+                  <div className="relative flex h-full cursor-pointer select-none flex-col overflow-hidden rounded-2xl bg-card-surface p-6 text-slate-900 shadow-flashcard md:p-8">
                   {/* Star */}
                   <button
                     onClick={(e) => { e.stopPropagation(); handleToggleSave(); }}
-                    className="absolute top-4 right-4 p-2 hover:bg-black/5 rounded-full transition-colors"
+                    className="absolute right-4 top-4 rounded-full p-2 text-slate-400 transition-colors hover:bg-black/5 hover:text-accent-gold"
+                    aria-label={isSaved ? 'Remove from special questions' : 'Save to special questions'}
                   >
                     <Star className={cn('w-5 h-5', isSaved ? 'text-accent-gold fill-current' : 'text-slate-400')} />
                   </button>
-                  <p className="text-2xl md:text-3xl font-bold text-slate-900 text-center leading-relaxed">
-                    {currentQuestion.question}
-                  </p>
-                  <p className="text-xs text-slate-400 mt-8">Click or press Space to flip</p>
+                    <div className="pr-12">
+                      <p className="mb-2 text-xs font-semibold uppercase text-indigo-500">
+                        Question
+                      </p>
+                      <h1 className="text-2xl font-bold leading-snug text-slate-950 md:text-3xl">
+                        {currentQuestion.question}
+                      </h1>
+                    </div>
+                    <div className="flex flex-1 items-center justify-center">
+                      <div className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-500">
+                        Click or press Space to reveal answer
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Back */}
-              <div className="backface-hidden rotate-y-180 absolute inset-0">
-                <div className="bg-card-surface rounded-2xl shadow-flashcard p-8 md:p-12 min-h-[360px] flex flex-col items-center justify-center cursor-pointer select-none">
+                {/* Back */}
+                <div className="backface-hidden rotate-y-180 absolute inset-0">
+                  <div className="relative flex h-full cursor-default select-none flex-col overflow-hidden rounded-2xl bg-card-surface p-6 text-slate-900 shadow-flashcard md:p-8">
                   <button
                     onClick={(e) => { e.stopPropagation(); handleToggleSave(); }}
-                    className="absolute top-4 right-4 p-2 hover:bg-black/5 rounded-full transition-colors"
+                    className="absolute right-4 top-4 rounded-full p-2 text-slate-400 transition-colors hover:bg-black/5 hover:text-accent-gold"
+                    aria-label={isSaved ? 'Remove from special questions' : 'Save to special questions'}
                   >
                     <Star className={cn('w-5 h-5', isSaved ? 'text-accent-gold fill-current' : 'text-slate-400')} />
                   </button>
-                  <p className="text-xl md:text-2xl font-medium text-slate-800 text-center leading-relaxed">
-                    {currentQuestion.answer}
-                  </p>
-                  <p className="text-xs text-slate-400 mt-8">Rate your knowledge</p>
+                    <div className="pr-12">
+                      <p className="mb-2 text-xs font-semibold uppercase text-indigo-500">
+                        Question
+                      </p>
+                      <h1 className="line-clamp-3 text-xl font-bold leading-snug text-slate-950 md:text-2xl">
+                        {currentQuestion.question}
+                      </h1>
+                    </div>
+                    <div className="mt-6 flex flex-1 items-center justify-center rounded-xl border border-slate-200 bg-white/65 p-5">
+                      <p className="max-h-52 overflow-y-auto text-center text-xl font-medium leading-relaxed text-slate-800 md:text-2xl">
+                        {currentQuestion.answer}
+                      </p>
+                    </div>
+                    <p className="mt-5 text-center text-xs font-medium uppercase text-slate-400">
+                      Choose how well you knew it
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           </AnimatePresence>
         </div>
@@ -353,7 +372,7 @@ export default function FlashcardSessionPage() {
                   <span className="absolute top-2 right-2 text-[10px] font-mono opacity-40" style={{ color: btn.color }}>
                     {btn.shortcut}
                   </span>
-                  <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: btn.color }}>
+                  <span className="text-sm font-semibold uppercase" style={{ color: btn.color }}>
                     {btn.label}
                   </span>
                   <span className="text-xs opacity-60" style={{ color: btn.color }}>

@@ -2,7 +2,33 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { getSession } from '@/lib/utils/session';
-import { ActionResult, PlaySession, SessionHistory } from '@/types/app';
+import { ActionResult, DifficultyRating, PlaySession, Question, SessionHistory } from '@/types/app';
+
+type AnswerRating = Exclude<DifficultyRating, 'none'>;
+
+export type AnswerSessionCardResult = {
+  session: PlaySession;
+  question: Question | null;
+  completed: boolean;
+  refreshedQueue: boolean;
+};
+
+export type SessionCurrentQuestionResult = {
+  session: PlaySession;
+  question: Question | null;
+};
+
+async function getQuestionById(questionId: string): Promise<Question | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('questions')
+    .select('*')
+    .eq('id', questionId)
+    .single();
+
+  if (error || !data) return null;
+  return data as Question;
+}
 
 export async function createSession(
   profileId: string,
@@ -93,6 +119,30 @@ export async function getSessionById(sessionId: string): Promise<ActionResult<Pl
   return { success: true, data: data as PlaySession };
 }
 
+export async function getSessionCurrentQuestion(sessionId: string): Promise<ActionResult<SessionCurrentQuestionResult>> {
+  const sessionResult = await getSessionById(sessionId);
+  if (!sessionResult.success || !sessionResult.data) {
+    return { success: false, error: sessionResult.error || 'Session not found' };
+  }
+
+  const playSession = sessionResult.data;
+  if (playSession.status !== 'active') {
+    return { success: true, data: { session: playSession, question: null } };
+  }
+
+  const currentQuestionId = playSession.question_queue[playSession.current_index];
+  if (!currentQuestionId) {
+    return { success: false, error: 'No current question found' };
+  }
+
+  const question = await getQuestionById(currentQuestionId);
+  if (!question || question.profile_id !== playSession.profile_id) {
+    return { success: false, error: 'Question not found' };
+  }
+
+  return { success: true, data: { session: playSession, question } };
+}
+
 export async function closeSession(sessionId: string, status: 'completed' | 'quit'): Promise<ActionResult<void>> {
   const session = await getSession();
   if (!session) return { success: false, error: 'Unauthorized' };
@@ -123,7 +173,7 @@ export async function recordAnswer(
   sessionId: string,
   profileId: string,
   questionId: string,
-  result: 'easy' | 'good' | 'hard' | 'super_hard'
+  result: AnswerRating
 ): Promise<ActionResult<void>> {
   const session = await getSession();
   if (!session || session.profile_id !== profileId) {
@@ -142,6 +192,176 @@ export async function recordAnswer(
 
   if (error) return { success: false, error: error.message };
   return { success: true };
+}
+
+export async function answerSessionCard(
+  sessionId: string,
+  result: AnswerRating
+): Promise<ActionResult<AnswerSessionCardResult>> {
+  const session = await getSession();
+  if (!session) {
+    return { success: false, error: 'Unauthorized' };
+  }
+
+  const supabase = createClient();
+  const { data: activeSession, error: sessionError } = await supabase
+    .from('play_sessions')
+    .select('*')
+    .eq('id', sessionId)
+    .single();
+
+  if (sessionError || !activeSession) {
+    return { success: false, error: 'Session not found' };
+  }
+
+  const playSession = activeSession as PlaySession;
+  if (playSession.profile_id !== session.profile_id) {
+    return { success: false, error: 'Not found' };
+  }
+
+  if (playSession.status !== 'active') {
+    return { success: false, error: 'Session is no longer active' };
+  }
+
+  if (!playSession.question_queue.length) {
+    return { success: false, error: 'This session has no questions' };
+  }
+
+  const currentQuestionId = playSession.question_queue[playSession.current_index];
+  if (!currentQuestionId) {
+    return { success: false, error: 'No current question found' };
+  }
+
+  const currentQuestion = await getQuestionById(currentQuestionId);
+  if (!currentQuestion || currentQuestion.profile_id !== session.profile_id) {
+    return { success: false, error: 'Question not found' };
+  }
+
+  const { error: answerError } = await supabase
+    .from('session_answers')
+    .insert({
+      session_id: sessionId,
+      profile_id: session.profile_id,
+      question_id: currentQuestionId,
+      result,
+    });
+
+  if (answerError) {
+    return { success: false, error: answerError.message };
+  }
+
+  const { data: updatedSessionData, error: updatedSessionError } = await supabase
+    .from('play_sessions')
+    .select('*')
+    .eq('id', sessionId)
+    .single();
+
+  if (updatedSessionError || !updatedSessionData) {
+    return { success: false, error: 'Failed to reload session' };
+  }
+
+  let updatedSession = updatedSessionData as PlaySession;
+  const finishedQueue = updatedSession.current_index >= updatedSession.question_queue.length;
+
+  if (finishedQueue && !updatedSession.is_infinity) {
+    const { error: closeError } = await supabase.rpc('fn_close_session', {
+      p_session_id: sessionId,
+      p_status: 'completed',
+    });
+
+    if (closeError) {
+      return { success: false, error: closeError.message };
+    }
+
+    const { data: closedSessionData } = await supabase
+      .from('play_sessions')
+      .select('*')
+      .eq('id', sessionId)
+      .single();
+
+    updatedSession = (closedSessionData as PlaySession) || {
+      ...updatedSession,
+      status: 'completed',
+      ended_at: new Date().toISOString(),
+    };
+
+    return {
+      success: true,
+      data: {
+        session: updatedSession,
+        question: null,
+        completed: true,
+        refreshedQueue: false,
+      },
+    };
+  }
+
+  if (finishedQueue && updatedSession.is_infinity) {
+    const { data: queueData, error: queueError } = await supabase.rpc('get_play_queue', {
+      p_profile_id: session.profile_id,
+      p_category_ids: updatedSession.category_ids.length > 0 ? updatedSession.category_ids : [],
+      p_mode: updatedSession.mode,
+      p_limit: null,
+    });
+
+    if (queueError) {
+      return { success: false, error: queueError.message };
+    }
+
+    const refreshedQueue = ((queueData as { question_id: string; question_order: number }[]) || []).map(q => q.question_id);
+    if (!refreshedQueue.length) {
+      return { success: false, error: 'No questions found for selected categories' };
+    }
+
+    const { data: refreshedSessionData, error: refreshError } = await supabase
+      .from('play_sessions')
+      .update({
+        question_queue: refreshedQueue,
+        current_index: 0,
+      })
+      .eq('id', sessionId)
+      .select()
+      .single();
+
+    if (refreshError || !refreshedSessionData) {
+      return { success: false, error: refreshError?.message || 'Failed to refresh queue' };
+    }
+
+    const nextQuestion = await getQuestionById(refreshedQueue[0]);
+    if (!nextQuestion) {
+      return { success: false, error: 'Question not found' };
+    }
+
+    return {
+      success: true,
+      data: {
+        session: refreshedSessionData as PlaySession,
+        question: nextQuestion,
+        completed: false,
+        refreshedQueue: true,
+      },
+    };
+  }
+
+  const nextQuestionId = updatedSession.question_queue[updatedSession.current_index];
+  if (!nextQuestionId) {
+    return { success: false, error: 'No next question found' };
+  }
+
+  const nextQuestion = await getQuestionById(nextQuestionId);
+  if (!nextQuestion) {
+    return { success: false, error: 'Question not found' };
+  }
+
+  return {
+    success: true,
+    data: {
+      session: updatedSession,
+      question: nextQuestion,
+      completed: false,
+      refreshedQueue: false,
+    },
+  };
 }
 
 export async function refreshQueue(
