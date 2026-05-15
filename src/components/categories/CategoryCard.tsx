@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { MoreVertical, FolderOpen } from 'lucide-react';
 import { MiniDifficultyBar } from '@/components/shared/MiniDifficultyBar';
 import { CategoryOverview } from '@/types/app';
+import { CategoryIcon } from '@/lib/category-icons';
 import { cn } from '@/lib/utils';
 
 interface CategoryCardProps {
@@ -25,15 +26,17 @@ export function CategoryCard({ category, index, onClick, onEdit, onDelete }: Cat
       transition={{ duration: 0.35, delay: index * 0.05 }}
       whileHover={{ y: -4 }}
       className={cn(
-        'bg-bg-tertiary rounded-xl p-5 shadow-card hover:shadow-elevated transition-all cursor-pointer relative',
-        category.is_special && 'ring-2 ring-accent-gold/50'
+        'panel relative cursor-pointer p-5 transition-all duration-200 hover:-translate-y-1 hover:border-border-active hover:shadow-elevated',
+        category.is_special && 'border-accent-gold/35 bg-amber-500/5'
       )}
     >
       <div onClick={onClick}>
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="text-2xl">{category.icon}</span>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border-subtle bg-bg-quaternary" style={{ color: category.color }}>
+              <CategoryIcon icon={category.icon} className="h-5 w-5" />
+            </div>
             <div className="min-w-0">
               <h3 className="font-semibold text-text-primary truncate">{category.name}</h3>
               {category.type && (
@@ -71,7 +74,7 @@ export function CategoryCard({ category, index, onClick, onEdit, onDelete }: Cat
       {showMenu && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
-          <div className="absolute top-12 right-4 bg-bg-quaternary rounded-lg shadow-elevated border border-border-subtle py-1 z-20 min-w-[140px]">
+          <div className="absolute right-4 top-12 z-20 min-w-[140px] rounded-lg border border-border-subtle bg-bg-quaternary py-1 shadow-elevated">
             <button
               onClick={(e) => { e.stopPropagation(); onEdit(); setShowMenu(false); }}
               className="w-full text-left px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors"

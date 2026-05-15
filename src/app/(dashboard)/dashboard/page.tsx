@@ -12,6 +12,7 @@ import { getRecentSessions } from '@/lib/actions/sessions';
 import { Avatar } from '@/components/shared/Avatar';
 import { ProfileStats, SessionHistory } from '@/types/app';
 import { cn } from '@/lib/utils';
+import { LoadingState, StatCard } from '@/components/shared/AppShell';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -90,11 +91,7 @@ export default function DashboardPage() {
   }, [router]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-accent-indigo border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingState label="Loading dashboard" />;
   }
 
   if (!profile) return null;
@@ -106,16 +103,14 @@ export default function DashboardPage() {
       animate="visible"
       className="space-y-6"
     >
-      {/* Welcome Banner */}
       <motion.div
         variants={itemVariants}
-        className="relative overflow-hidden bg-gradient-to-r from-indigo-900/50 to-purple-900/30 rounded-xl p-6 border border-border-subtle"
+        className="relative overflow-hidden rounded-lg border border-border-subtle bg-bg-tertiary p-6 shadow-card"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" style={{ animationDuration: '8s' }} />
         <div className="relative flex items-center gap-4">
           <Avatar name={profile.display_name} color={profile.avatar_color} size="lg" />
           <div>
-            <h1 className="text-2xl font-bold text-text-primary">
+            <h1 className="text-2xl font-semibold tracking-tight text-text-primary">
               Welcome back, {profile.display_name}!
             </h1>
             <p className="text-text-secondary text-sm mt-0.5">Ready to master some flashcards?</p>
@@ -131,23 +126,8 @@ export default function DashboardPage() {
           { icon: Trophy, label: 'Points', value: stats?.total_points || 0, color: 'text-accent-gold' },
           { icon: FolderOpen, label: 'Categories', value: stats?.total_categories || 0, color: 'text-accent-purple' },
         ].map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            whileHover={{ y: -2 }}
-            className="bg-bg-tertiary rounded-xl p-4 shadow-card hover:shadow-elevated transition-shadow"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <stat.icon className={`w-4 h-4 ${stat.color}`} />
-              <span className="text-xs text-text-muted">{stat.label}</span>
-            </div>
-            <motion.p
-              className="text-2xl font-bold text-text-primary"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 + i * 0.1 }}
-            >
-              {stat.value}
-            </motion.p>
+          <motion.div key={stat.label} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 + i * 0.1 }}>
+            <StatCard icon={stat.icon} label={stat.label} value={stat.value} tone={stat.color} />
           </motion.div>
         ))}
       </motion.div>

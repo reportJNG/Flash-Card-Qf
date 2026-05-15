@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: #0f172a;
+    --background: #0b0f17;
     --foreground: #f8fafc;
-    --card: #1e293b;
+    --card: #111827;
     --card-foreground: #f8fafc;
-    --popover: #1e293b;
+    --popover: #111827;
     --popover-foreground: #f8fafc;
-    --primary: #6366f1;
+    --primary: #7c8cff;
     --primary-foreground: #ffffff;
-    --secondary: #334155;
+    --secondary: #1f2937;
     --secondary-foreground: #f8fafc;
-    --muted: #334155;
-    --muted-foreground: #94a3b8;
-    --accent: #1e293b;
+    --muted: #202a38;
+    --muted-foreground: #9aa7b8;
+    --accent: #172033;
     --accent-foreground: #f8fafc;
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;
-    --border: rgba(148, 163, 184, 0.1);
-    --input: #334155;
-    --ring: rgba(99, 102, 241, 0.4);
-    --radius: 0.625rem;
+    --border: rgba(148, 163, 184, 0.14);
+    --input: #1b2533;
+    --ring: rgba(124, 140, 255, 0.45);
+    --radius: 0.5rem;
   }
 
   * {
@@ -33,6 +33,7 @@
   body {
     @apply bg-bg-secondary text-text-primary antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    min-height: 100vh;
   }
 
   html {
@@ -55,7 +56,16 @@
     perspective: 1000px;
   }
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-sky-300 to-emerald-300;
+  }
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .panel {
+    @apply rounded-lg border border-border-subtle bg-bg-tertiary shadow-card;
+  }
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary;
   }
   .bg-shimmer {
     background: linear-gradient(

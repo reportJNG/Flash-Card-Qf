@@ -57,7 +57,7 @@ export function FileDropzone({ onParse }: FileDropzoneProps) {
       onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
-      className={`border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200 cursor-pointer ${
+      className={`cursor-pointer rounded-lg border-2 border-dashed p-12 text-center transition-all duration-200 ${
         isDragging
           ? 'border-accent-indigo bg-accent-indigo/5 scale-[1.01]'
           : 'border-border-subtle hover:border-text-muted'

@@ -11,6 +11,7 @@ import { PinModal } from '@/components/auth/PinModal';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Profile } from '@/types/app';
 import toast from 'react-hot-toast';
+import { LoadingState } from '@/components/shared/AppShell';
 
 export default function LoginPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -73,24 +74,23 @@ export default function LoginPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-accent-indigo border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingState label="Loading profiles" />;
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary flex flex-col items-center justify-center p-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-bg-primary p-6">
       {/* Logo */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-10"
+        className="mb-10 text-center"
       >
-        <h1 className="text-5xl font-extrabold text-gradient mb-2">FlashQF</h1>
-        <p className="text-xs text-text-muted tracking-[0.2em] uppercase">Flip. Rate. Master.</p>
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl border border-border-subtle bg-bg-tertiary shadow-card">
+          <Layers className="h-7 w-7 text-accent-indigo" />
+        </div>
+        <h1 className="mb-2 text-5xl font-semibold tracking-tight text-gradient">FlashQF</h1>
+        <p className="text-xs uppercase tracking-[0.2em] text-text-muted">Flip. Rate. Master.</p>
       </motion.div>
 
       {profiles.length === 0 ? (
@@ -125,7 +125,7 @@ export default function LoginPage() {
             Select a profile to continue
           </motion.p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 max-w-lg w-full">
+          <div className="grid w-full max-w-lg grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {profiles.map((profile, i) => (
               <ProfileCard
                 key={profile.id}

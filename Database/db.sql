@@ -32,7 +32,7 @@ COMMENT ON COLUMN profiles.pin IS 'Optional 4-digit numeric PIN. NULL means no P
 -- ============================================================
 -- TABLE: categories
 -- Profiles create categories to group their questions.
--- One auto-created "Special ⭐" category per profile (trigger below).
+-- One auto-created "Special" category per profile (trigger below).
 -- ============================================================
 CREATE TABLE categories (
   id             UUID        PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -41,8 +41,8 @@ CREATE TABLE categories (
   type           TEXT,                                       -- user-defined label e.g. "Math", "History"
   description    TEXT,
   color          TEXT        NOT NULL DEFAULT '#6366f1',
-  icon           TEXT        NOT NULL DEFAULT '📚',
-  is_special     BOOLEAN     NOT NULL DEFAULT FALSE,          -- the auto-created "Special ⭐" category
+  icon           TEXT        NOT NULL DEFAULT 'book-open',
+  is_special     BOOLEAN     NOT NULL DEFAULT FALSE,          -- the auto-created "Special" category
   question_count INTEGER     NOT NULL DEFAULT 0,             -- cached count, kept in sync by trigger
 
   created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -474,7 +474,7 @@ BEGIN
     'special',
     'Your saved star questions — collected while playing.',
     '#f59e0b',
-    '⭐',
+    'star',
     TRUE
   );
   RETURN NEW;

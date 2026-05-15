@@ -12,6 +12,7 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { CategoryOverview } from '@/types/app';
 import { FolderOpen } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { LoadingState, PageHeader } from '@/components/shared/AppShell';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<CategoryOverview[]>([]);
@@ -72,25 +73,22 @@ export default function CategoriesPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-accent-indigo border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingState label="Loading categories" />;
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-text-primary">My Categories</h1>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-accent-indigo hover:bg-indigo-600 text-white rounded-lg transition-colors text-sm font-medium"
-        >
-          <Plus className="w-4 h-4" />
-          New Category
-        </button>
-      </div>
+      <PageHeader
+        title="My Categories"
+        description="Organize question decks and track mastery at a glance."
+        icon={FolderOpen}
+        action={
+          <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 rounded-lg bg-accent-indigo px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-indigo/90">
+            <Plus className="h-4 w-4" />
+            New Category
+          </button>
+        }
+      />
 
       {categories.length === 0 ? (
         <EmptyState

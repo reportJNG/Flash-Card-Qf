@@ -11,6 +11,7 @@ import { toggleSaveToSpecial } from '@/lib/actions/questions';
 import { PlaySession, Question } from '@/types/app';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import { LoadingState } from '@/components/shared/AppShell';
 
 const POINTS: Record<string, number> = { easy: 10, good: 7, hard: 3, super_hard: 0 };
 
@@ -193,11 +194,7 @@ export default function FlashcardSessionPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-accent-indigo border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingState label="Loading session" />;
   }
 
   if (!session || !currentQuestion) {
@@ -284,7 +281,7 @@ export default function FlashcardSessionPage() {
               >
                 {/* Front */}
                 <div className="backface-hidden absolute inset-0">
-                  <div className="relative flex h-full cursor-pointer select-none flex-col overflow-hidden rounded-2xl bg-card-surface p-6 text-slate-900 shadow-flashcard md:p-8">
+                  <div className="relative flex h-full cursor-pointer select-none flex-col overflow-hidden rounded-xl bg-card-surface p-6 text-slate-900 shadow-flashcard md:p-8">
                   {/* Star */}
                   <button
                     onClick={(e) => { e.stopPropagation(); handleToggleSave(); }}
@@ -311,7 +308,7 @@ export default function FlashcardSessionPage() {
 
                 {/* Back */}
                 <div className="backface-hidden rotate-y-180 absolute inset-0">
-                  <div className="relative flex h-full cursor-default select-none flex-col overflow-hidden rounded-2xl bg-card-surface p-6 text-slate-900 shadow-flashcard md:p-8">
+                  <div className="relative flex h-full cursor-default select-none flex-col overflow-hidden rounded-xl bg-card-surface p-6 text-slate-900 shadow-flashcard md:p-8">
                   <button
                     onClick={(e) => { e.stopPropagation(); handleToggleSave(); }}
                     className="absolute right-4 top-4 rounded-full p-2 text-slate-400 transition-colors hover:bg-black/5 hover:text-accent-gold"

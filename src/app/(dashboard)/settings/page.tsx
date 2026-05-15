@@ -10,6 +10,7 @@ import { Avatar } from '@/components/shared/Avatar';
 import { ConfirmModal } from '@/components/shared/ConfirmModal';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import { LoadingState, PageHeader } from '@/components/shared/AppShell';
 
 export default function SettingsPage() {
   const [profile, setProfile] = useState<{ id: string; display_name: string; avatar_color: string; hasPin: boolean } | null>(null);
@@ -102,11 +103,7 @@ export default function SettingsPage() {
   };
 
   if (!profile) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-accent-indigo border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingState label="Loading settings" />;
   }
 
   return (
@@ -115,10 +112,10 @@ export default function SettingsPage() {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-lg mx-auto space-y-6"
     >
-      <h1 className="text-2xl font-bold text-text-primary">Profile Settings</h1>
+      <PageHeader title="Profile Settings" description="Manage your profile, PIN, and data cleanup." icon={AlertTriangle} />
 
       {/* Profile Section */}
-      <div className="bg-bg-tertiary rounded-xl p-6 shadow-card space-y-5">
+      <div className="panel space-y-5 p-6">
         <div className="flex items-center gap-4 mb-2">
           <Avatar name={displayName || profile.display_name} color={selectedColor} size="lg" />
           <div>
@@ -187,7 +184,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Danger Zone */}
-      <div className="bg-bg-tertiary rounded-xl p-6 shadow-card border border-accent-red/20 space-y-4">
+      <div className="space-y-4 rounded-lg border border-accent-red/20 bg-bg-tertiary p-6 shadow-card">
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle className="w-5 h-5 text-accent-red" />
           <h2 className="text-lg font-semibold text-accent-red">Danger Zone</h2>

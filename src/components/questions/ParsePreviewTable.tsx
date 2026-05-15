@@ -55,7 +55,7 @@ export function ParsePreviewTable({ pairs, onPairsChange, onImport, onCancel }: 
         {validPairs.length} valid question{validPairs.length !== 1 ? 's' : ''} ready to import
       </div>
 
-      <div className="bg-bg-tertiary rounded-xl overflow-hidden max-h-[400px] overflow-y-auto scrollbar-thin">
+      <div className="max-h-[400px] overflow-y-auto rounded-lg border border-border-subtle bg-bg-tertiary scrollbar-thin">
         <table className="w-full">
           <thead>
             <tr className="bg-bg-quaternary text-left">

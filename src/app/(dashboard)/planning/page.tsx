@@ -9,6 +9,8 @@ import { MiniDifficultyBar } from '@/components/shared/MiniDifficultyBar';
 import { Play, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { CategoryIcon } from '@/lib/category-icons';
+import { LoadingState, PageHeader } from '@/components/shared/AppShell';
 
 type SortOption = 'most' | 'unseen' | 'mastery';
 
@@ -59,11 +61,7 @@ export default function PlanningPage() {
   });
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-accent-indigo border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingState label="Loading planning" />;
   }
 
   if (categories.length === 0) {
@@ -78,13 +76,13 @@ export default function PlanningPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-text-primary">Planning</h1>
+      <PageHeader title="Planning" description="Spot what needs the next study pass." icon={Layers} />
 
       {/* Global Summary */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-bg-tertiary rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4"
+        className="panel flex flex-col items-center justify-between gap-4 p-6 sm:flex-row"
       >
         <div className="text-center sm:text-left">
           <p className="text-3xl font-bold text-text-primary">{totalQuestions}</p>
@@ -133,10 +131,12 @@ export default function PlanningPage() {
             key={cat.id}
             variants={itemVariants}
             layout
-            className="bg-bg-tertiary rounded-xl p-5 shadow-card hover:shadow-elevated transition-all"
+            className="panel p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-elevated"
           >
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-xl">{cat.icon}</span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border-subtle bg-bg-quaternary" style={{ color: cat.color }}>
+                <CategoryIcon icon={cat.icon} className="h-4 w-4" />
+              </div>
               <h3 className="font-semibold text-text-primary">{cat.name}</h3>
             </div>
             <p className="text-sm text-text-muted mb-3">{cat.question_count} questions</p>

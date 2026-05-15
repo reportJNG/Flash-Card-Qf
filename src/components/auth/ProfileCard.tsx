@@ -20,7 +20,7 @@ export function ProfileCard({ profile, onClick, index }: ProfileCardProps) {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="flex flex-col items-center gap-3 p-4 rounded-xl transition-all duration-200 group"
+      className="group flex flex-col items-center gap-3 rounded-lg border border-transparent bg-bg-tertiary/45 p-4 transition-all duration-200 hover:border-border-subtle hover:bg-bg-tertiary hover:shadow-card"
     >
       <div className="relative">
         <Avatar name={profile.display_name} color={profile.avatar_color} size="xl" />

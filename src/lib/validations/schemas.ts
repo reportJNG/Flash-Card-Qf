@@ -18,7 +18,7 @@ export const loginSchema = z.object({
 export const createCategorySchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   type: z.string().max(50).optional(),
-  icon: z.string().max(10).default('📚'),
+  icon: z.string().max(40).default('book-open'),
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).default('#6366f1'),
 });
 

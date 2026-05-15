@@ -9,6 +9,8 @@ import { createSession } from '@/lib/actions/sessions';
 import { CategoryOverview } from '@/types/app';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import { CategoryIcon } from '@/lib/category-icons';
+import { PageHeader } from '@/components/shared/AppShell';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -125,10 +127,10 @@ export default function PlaySetupPage() {
   };
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-2xl mx-auto space-y-8 pb-24">
-      <motion.h1 variants={itemVariants} className="text-3xl font-bold text-text-primary text-center">
-        Play Setup
-      </motion.h1>
+    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="mx-auto max-w-2xl space-y-6 pb-24">
+      <motion.div variants={itemVariants}>
+        <PageHeader title="Play Setup" description="Choose the focus, pace, and card count for this session." icon={Play} />
+      </motion.div>
 
       {/* Mode Selection */}
       <motion.div variants={itemVariants} className="space-y-3">
@@ -191,7 +193,7 @@ export default function PlaySetupPage() {
         </div>
 
         {catSelection === 'specific' && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="bg-bg-tertiary rounded-lg p-3 max-h-48 overflow-y-auto scrollbar-thin">
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="max-h-48 overflow-y-auto rounded-lg border border-border-subtle bg-bg-tertiary p-3 scrollbar-thin">
             {categories.filter(c => !c.is_special).map(cat => (
               <label key={cat.id} className="flex items-center gap-3 py-2 cursor-pointer hover:bg-white/5 rounded px-2 transition-colors">
                 <input
@@ -204,7 +206,10 @@ export default function PlaySetupPage() {
                   }}
                   className="w-4 h-4 rounded border-border-subtle bg-bg-quaternary text-accent-indigo accent-accent-indigo"
                 />
-                <span className="text-sm text-text-primary">{cat.icon} {cat.name}</span>
+                <span className="flex items-center gap-2 text-sm text-text-primary">
+                  <CategoryIcon icon={cat.icon} className="h-4 w-4" />
+                  {cat.name}
+                </span>
                 <span className="text-xs text-text-muted ml-auto">{cat.question_count}</span>
               </label>
             ))}

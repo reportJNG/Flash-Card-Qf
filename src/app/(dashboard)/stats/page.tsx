@@ -8,6 +8,8 @@ import { getSessionHistory } from '@/lib/actions/sessions';
 import { CategoryOverview, SessionHistory, DIFFICULTY_COLORS } from '@/types/app';
 import { MiniDifficultyBar } from '@/components/shared/MiniDifficultyBar';
 import { cn } from '@/lib/utils';
+import { LoadingState, PageHeader } from '@/components/shared/AppShell';
+import { CategoryIcon } from '@/lib/category-icons';
 
 function AnimatedStat({ value, suffix = '' }: { value: number; suffix?: string }) {
   const motionValue = useMotionValue(0);
@@ -115,8 +117,8 @@ function DifficultyDonut({ counts }: { counts: Record<string, number> }) {
             />
           );
         })}
-        <text x={cx} y={cy - 5} textAnchor="middle" className="fill-text-primary text-xl font-bold">{total}</text>
-        <text x={cx} y={cy + 15} textAnchor="middle" className="fill-text-muted text-xs">total</text>
+        <text x={cx} y={cy - 5} textAnchor="middle" fill="#f8fafc" className="text-xl font-bold">{total}</text>
+        <text x={cx} y={cy + 15} textAnchor="middle" fill="#778397" className="text-xs">total</text>
       </svg>
       <div className="space-y-1.5 w-full">
         {entries.map(entry => (
@@ -157,11 +159,7 @@ export default function StatsPage() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-accent-indigo border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingState label="Loading stats" />;
   }
 
   const totalQuestions = categories.reduce((s, c) => s + c.question_count, 0);
@@ -182,7 +180,7 @@ export default function StatsPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold text-text-primary">My Stats</h1>
+      <PageHeader title="My Stats" description="Track volume, recall strength, and session history." icon={Brain} />
 
       {/* Overview Cards */}
       <motion.div
@@ -248,7 +246,9 @@ export default function StatsPage() {
         <div className="space-y-3">
           {categories.map((cat) => (
             <div key={cat.id} className="flex items-center gap-3">
-              <span className="text-lg">{cat.icon}</span>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border-subtle bg-bg-quaternary" style={{ color: cat.color }}>
+                <CategoryIcon icon={cat.icon} className="h-4 w-4" />
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm text-text-primary truncate">{cat.name}</span>

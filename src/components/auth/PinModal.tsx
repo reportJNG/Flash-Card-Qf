@@ -109,7 +109,7 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
             animate={isShaking ? { x: [-10, 10, -10, 10, 0] } : { scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="bg-bg-secondary rounded-xl p-6 max-w-sm w-full mx-4 shadow-elevated border border-border-subtle"
+            className="mx-4 w-full max-w-sm rounded-lg border border-border-subtle bg-bg-secondary p-6 shadow-elevated"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-end mb-2">
@@ -152,7 +152,7 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
                   key={key}
                   onClick={() => handleKeyPress(key)}
                   disabled={isLocked}
-                  className="h-14 bg-bg-quaternary hover:bg-bg-quaternary/80 rounded-lg text-lg font-medium text-text-primary transition-colors disabled:opacity-50"
+                  className="h-14 rounded-lg bg-bg-quaternary text-lg font-medium text-text-primary transition-colors hover:bg-bg-quaternary/80 disabled:opacity-50"
                 >
                   {key}
                 </button>
@@ -160,21 +160,21 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
               <button
                 onClick={() => handleKeyPress('backspace')}
                 disabled={isLocked}
-                className="h-14 bg-bg-quaternary hover:bg-bg-quaternary/80 rounded-lg flex items-center justify-center text-text-primary transition-colors disabled:opacity-50"
+                className="flex h-14 items-center justify-center rounded-lg bg-bg-quaternary text-text-primary transition-colors hover:bg-bg-quaternary/80 disabled:opacity-50"
               >
                 <Delete className="w-5 h-5" />
               </button>
               <button
                 onClick={() => handleKeyPress('0')}
                 disabled={isLocked}
-                className="h-14 bg-bg-quaternary hover:bg-bg-quaternary/80 rounded-lg text-lg font-medium text-text-primary transition-colors disabled:opacity-50"
+                className="h-14 rounded-lg bg-bg-quaternary text-lg font-medium text-text-primary transition-colors hover:bg-bg-quaternary/80 disabled:opacity-50"
               >
                 0
               </button>
               <button
                 onClick={() => handleKeyPress('enter')}
                 disabled={isLocked || pin.length !== 4}
-                className="h-14 bg-accent-indigo hover:bg-indigo-600 disabled:bg-bg-quaternary rounded-lg text-lg font-medium text-white transition-colors disabled:text-text-muted"
+                className="h-14 rounded-lg bg-accent-indigo text-lg font-medium text-white transition-colors hover:bg-accent-indigo/90 disabled:bg-bg-quaternary disabled:text-text-muted"
               >
                 Go
               </button>

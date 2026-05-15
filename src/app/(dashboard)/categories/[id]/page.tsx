@@ -17,6 +17,8 @@ import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { FileDropzone } from '@/components/questions/FileDropzone';
 import { ParsePreviewTable } from '@/components/questions/ParsePreviewTable';
+import { CategoryIcon } from '@/lib/category-icons';
+import { LoadingState, SectionPanel } from '@/components/shared/AppShell';
 
 type Tab = 'questions' | 'add';
 type SubTab = 'manual' | 'upload';
@@ -176,11 +178,7 @@ export default function CategoryDetailPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-accent-indigo border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingState label="Loading category" />;
   }
 
   if (!category) return null;
@@ -189,12 +187,14 @@ export default function CategoryDetailPage() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <button onClick={() => router.push('/categories')} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+        <button onClick={() => router.push('/categories')} className="rounded-lg p-2 transition-colors hover:bg-white/5">
           <ChevronLeft className="w-5 h-5 text-text-secondary" />
         </button>
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">{category.icon}</span>
+            <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-border-subtle bg-bg-tertiary" style={{ color: category.color }}>
+              <CategoryIcon icon={category.icon} className="h-5 w-5" />
+            </div>
             <h1 className="text-2xl font-bold text-text-primary">{category.name}</h1>
           </div>
           <div className="flex items-center gap-2 mt-1">
@@ -205,7 +205,7 @@ export default function CategoryDetailPage() {
       </div>
 
       {/* Difficulty bar */}
-      <div className="bg-bg-tertiary rounded-lg p-3">
+      <SectionPanel className="p-3">
         <MiniDifficultyBar
           noneCount={questions.filter(q => q.difficulty_stat === 'none').length}
           easyCount={questions.filter(q => q.difficulty_stat === 'easy').length}
@@ -213,7 +213,7 @@ export default function CategoryDetailPage() {
           hardCount={questions.filter(q => q.difficulty_stat === 'hard').length}
           superHardCount={questions.filter(q => q.difficulty_stat === 'super_hard').length}
         />
-      </div>
+      </SectionPanel>
 
       {/* Tabs */}
       <div className="flex gap-1 bg-bg-tertiary rounded-lg p-1">
@@ -341,7 +341,10 @@ export default function CategoryDetailPage() {
                                       onClick={() => handleMove(q.id, cat.id)}
                                       className="w-full text-left px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary hover:bg-white/5"
                                     >
-                                      {cat.icon} {cat.name}
+                                      <span className="inline-flex items-center gap-2">
+                                        <CategoryIcon icon={cat.icon} className="h-4 w-4" />
+                                        {cat.name}
+                                      </span>
                                     </button>
                                   ))}
                                 </div>

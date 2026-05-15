@@ -31,7 +31,7 @@ export function Sidebar({ profile }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'hidden md:flex flex-col h-screen bg-bg-secondary border-r border-border-subtle fixed left-0 top-0 z-40 transition-all duration-250',
+        'hidden md:flex flex-col h-screen bg-bg-secondary border-r border-border-subtle fixed left-0 top-0 z-40 transition-all duration-200',
         collapsed ? 'w-[72px]' : 'w-[240px]'
       )}
     >

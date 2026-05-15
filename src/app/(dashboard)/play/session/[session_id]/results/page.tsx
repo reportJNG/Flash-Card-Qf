@@ -10,6 +10,7 @@ import { getSessionById, getSessionAnswers } from '@/lib/actions/sessions';
 import { PlaySession } from '@/types/app';
 import { DIFFICULTY_COLORS } from '@/types/app';
 import { cn } from '@/lib/utils';
+import { LoadingState } from '@/components/shared/AppShell';
 
 function AnimatedNumber({ value, duration = 2000 }: { value: number; duration?: number }) {
   const motionValue = useMotionValue(0);
@@ -59,11 +60,7 @@ export default function ResultsPage() {
   }, [loadData]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-accent-indigo border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingState label="Loading results" />;
   }
 
   if (!session) return null;
@@ -84,7 +81,7 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-screen bg-bg-primary px-4 py-8">
-      <div className="max-w-lg mx-auto space-y-8">
+      <div className="mx-auto max-w-lg space-y-8">
         {/* Back */}
         <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm">
           <ArrowLeft className="w-4 h-4" />
@@ -164,7 +161,7 @@ export default function ResultsPage() {
           transition={{ delay: 0.5 }}
           className="flex justify-center"
         >
-          <div className="bg-bg-tertiary rounded-full px-6 py-3 flex items-center gap-3">
+          <div className="flex items-center gap-3 rounded-full border border-border-subtle bg-bg-tertiary px-6 py-3 shadow-card">
             <span className="text-sm text-text-muted">Smart Rate</span>
             <span className={cn(
               'text-xl font-bold',
@@ -190,7 +187,7 @@ export default function ResultsPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 + i * 0.03 }}
-                className="flex items-center justify-between bg-bg-tertiary rounded-lg p-3"
+                className="flex items-center justify-between rounded-lg border border-border-subtle bg-bg-tertiary p-3"
               >
                 <p className="text-sm text-text-primary truncate flex-1 mr-3">{a.question}</p>
                 <div className="flex items-center gap-2 shrink-0">
