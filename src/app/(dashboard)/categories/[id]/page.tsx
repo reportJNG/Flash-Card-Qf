@@ -197,7 +197,7 @@ export default function CategoryDetailPage() {
             <h1 className="min-w-0 break-words text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">{category.name}</h1>
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            {category.type && <span className="text-xs text-text-muted bg-bg-quaternary px-2 py-0.5 rounded-full">{category.type}</span>}
+            {category.type && <span className="rounded-full bg-bg-quaternary px-2 py-0.5 text-xs text-text-muted">{category.type}</span>}
             <span className="text-sm text-text-muted">{category.question_count} questions</span>
           </div>
         </div>
@@ -239,7 +239,7 @@ export default function CategoryDetailPage() {
                   className="field bg-bg-secondary pl-10 pr-10"
                 />
                 {search && (
-                  <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 rounded text-text-muted hover:text-text-primary focus-ring" aria-label="Clear search">
                     <X className="w-4 h-4 text-text-muted" />
                   </button>
                 )}
@@ -330,7 +330,7 @@ export default function CategoryDetailPage() {
                                 <Move className="w-4 h-4" />
                               </button>
                               {moveTarget?.id === q.id && (
-                <div className="absolute right-0 top-full z-20 mt-1 max-h-56 min-w-[180px] overflow-y-auto rounded-lg border border-border-subtle bg-bg-quaternary py-1 shadow-elevated">
+                                <div className="absolute right-0 top-full z-20 mt-1 max-h-56 min-w-[180px] overflow-y-auto rounded-lg border border-border-subtle bg-bg-quaternary py-1 shadow-elevated app-scrollbar">
                                   <p className="px-3 py-1 text-xs text-text-muted">Move to:</p>
                                   {allCategories.map(cat => (
                                     <button
@@ -356,7 +356,7 @@ export default function CategoryDetailPage() {
                             </button>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3 mt-2 text-xs text-text-muted">
+                        <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-text-muted">
                           <span>Seen {q.times_seen} times</span>
                           {q.last_played_at && (
                             <span>Last: {new Date(q.last_played_at).toLocaleDateString()}</span>
@@ -383,7 +383,7 @@ export default function CategoryDetailPage() {
             />
 
             {subTab === 'manual' ? (
-              <div className="space-y-4 max-w-2xl">
+              <div className="panel max-w-2xl space-y-4 p-4 sm:p-5">
                 <div>
                   <label className="block text-sm text-text-secondary mb-1.5">Question</label>
                   <textarea

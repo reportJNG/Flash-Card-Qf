@@ -57,10 +57,10 @@ export function FileDropzone({ onParse }: FileDropzoneProps) {
       onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
-      className={`cursor-pointer rounded-lg border-2 border-dashed p-12 text-center transition-all duration-200 ${
+      className={`cursor-pointer rounded-lg border-2 border-dashed bg-bg-tertiary/50 p-8 text-center transition-colors duration-200 sm:p-12 ${
         isDragging
-          ? 'border-accent-indigo bg-accent-indigo/5 scale-[1.01]'
-          : 'border-border-subtle hover:border-text-muted'
+          ? 'border-accent-indigo bg-accent-indigo/5'
+          : 'border-border-subtle hover:border-border-active'
       }`}
       onClick={() => document.getElementById('file-input')?.click()}
     >

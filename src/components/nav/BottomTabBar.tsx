@@ -20,8 +20,8 @@ export function BottomTabBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle bg-bg-secondary/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:hidden">
-      <div className="mx-auto flex min-h-16 max-w-lg items-center justify-around gap-1">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle bg-bg-primary/96 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:hidden">
+      <div className="mx-auto grid min-h-16 max-w-lg grid-cols-6 items-center gap-1">
       {navItems.map((item) => {
         const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
         return (
@@ -29,8 +29,8 @@ export function BottomTabBar() {
             key={item.href}
             href={item.href}
             className={cn(
-              'flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 transition-colors focus-ring',
-              isActive && (item.highlight ? 'bg-emerald-500/10' : 'bg-accent-indigo/10')
+              'flex min-w-0 flex-col items-center gap-0.5 rounded-lg border border-transparent px-1 py-1.5 transition-colors focus-ring',
+              isActive && (item.highlight ? 'border-emerald-500/20 bg-emerald-500/10' : 'border-border-active bg-accent-indigo/10')
             )}
           >
             <item.icon

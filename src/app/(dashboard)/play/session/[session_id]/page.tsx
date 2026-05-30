@@ -240,7 +240,7 @@ export default function FlashcardSessionPage() {
 
   if (!session || !currentQuestion) {
     return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center">
+      <div className="panel flex min-h-[60svh] items-center justify-center">
         <p className="text-text-muted">No questions available</p>
       </div>
     );
@@ -279,7 +279,7 @@ export default function FlashcardSessionPage() {
 
   return (
     <div className="relative flex min-h-[calc(100svh-8rem)] flex-col overflow-hidden rounded-lg border border-border-subtle bg-bg-primary shadow-card md:min-h-[calc(100svh-3rem)]">
-      <div className="border-b border-border-subtle bg-bg-secondary/85 px-3 py-3 backdrop-blur sm:px-4">
+      <div className="border-b border-border-subtle bg-bg-secondary/90 px-3 py-3 backdrop-blur sm:px-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -318,7 +318,7 @@ export default function FlashcardSessionPage() {
             {stats.map((stat) => {
               const Icon = stat.icon;
               return (
-                <div key={stat.label} className="min-w-0 rounded-lg border border-border-subtle bg-bg-tertiary px-3 py-2">
+                <div key={stat.label} className="min-w-0 rounded-lg border border-border-subtle bg-bg-tertiary/90 px-3 py-2">
                   <div className="flex items-center gap-2">
                     <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-md', stat.bg, stat.className)}>
                       <Icon className="h-4 w-4" />
@@ -346,7 +346,7 @@ export default function FlashcardSessionPage() {
         </div>
       )}
 
-      <div className="flex flex-1 items-center justify-center overflow-y-auto px-3 py-4 sm:px-4 sm:py-6">
+      <div className="flex flex-1 items-center justify-center overflow-y-auto px-3 py-4 app-scrollbar sm:px-4 sm:py-6">
         <div
           className="w-full max-w-3xl"
           onClick={revealAnswer}
@@ -384,12 +384,12 @@ export default function FlashcardSessionPage() {
                   </button>
                   <div className="pr-12">
                     <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-indigo-500">Question</p>
-                    <h1 className="max-h-[min(44svh,360px)] overflow-y-auto break-words text-balance text-xl font-bold leading-snug text-slate-950 scrollbar-thin sm:text-2xl md:text-3xl">
+                    <h1 className="max-h-[min(44svh,360px)] overflow-y-auto break-words text-balance text-xl font-bold leading-snug text-slate-950 app-scrollbar sm:text-2xl md:text-3xl">
                       {currentQuestion.question}
                     </h1>
                   </div>
                   <div className="flex min-h-24 flex-1 items-end justify-center pt-8">
-                    <div className="rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-center text-sm font-medium text-slate-500 shadow-sm">
+                    <div className="rounded-lg border border-slate-200 bg-white/70 px-4 py-2 text-center text-sm font-medium text-slate-500 shadow-sm">
                       Tap or press Space to reveal answer
                     </div>
                   </div>
@@ -408,12 +408,12 @@ export default function FlashcardSessionPage() {
                   </button>
                   <div className="pr-12">
                     <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-indigo-500">Question</p>
-                    <h1 className="max-h-28 overflow-y-auto break-words text-base font-bold leading-snug text-slate-950 scrollbar-thin sm:text-lg md:text-xl">
+                    <h1 className="max-h-28 overflow-y-auto break-words text-base font-bold leading-snug text-slate-950 app-scrollbar sm:text-lg md:text-xl">
                       {currentQuestion.question}
                     </h1>
                   </div>
                   <div className="mt-4 flex min-h-[180px] flex-1 items-center justify-center rounded-lg border border-slate-200 bg-white/70 p-4 sm:mt-6 sm:p-5">
-                    <p className="max-h-[min(42svh,360px)] overflow-y-auto break-words text-center text-lg font-medium leading-relaxed text-slate-800 scrollbar-thin sm:text-xl md:text-2xl">
+                    <p className="max-h-[min(42svh,360px)] overflow-y-auto break-words text-center text-lg font-medium leading-relaxed text-slate-800 app-scrollbar sm:text-xl md:text-2xl">
                       {currentQuestion.answer}
                     </p>
                   </div>
@@ -434,7 +434,7 @@ export default function FlashcardSessionPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 44 }}
             transition={{ duration: 0.25 }}
-            className="border-t border-border-subtle bg-bg-secondary/85 px-3 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur md:px-4 md:pb-5"
+            className="border-t border-border-subtle bg-bg-primary/92 px-3 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur md:px-4 md:pb-5"
           >
             <div className="mx-auto grid max-w-3xl grid-cols-2 gap-2 md:grid-cols-4">
               {RATING_BUTTONS.map((btn, i) => (
@@ -446,7 +446,7 @@ export default function FlashcardSessionPage() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => handleRate(btn.key)}
-                  className="relative flex min-h-20 flex-col items-center justify-center gap-1 rounded-lg border border-white/5 px-3 py-3 transition-all hover:shadow-lg focus-ring"
+                  className="relative flex min-h-20 flex-col items-center justify-center gap-1 rounded-lg border border-white/10 px-3 py-3 transition-colors hover:border-white/20 focus-ring"
                   style={{
                     backgroundColor: btn.bg,
                     boxShadow: `0 0 20px ${btn.color}20`,

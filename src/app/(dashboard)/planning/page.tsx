@@ -149,7 +149,7 @@ export default function PlanningPage() {
               </span>
               <button
                 onClick={() => router.push('/play')}
-                className="flex items-center gap-1.5 px-3 py-1.5 border border-accent-indigo text-accent-indigo rounded-lg text-xs hover:bg-accent-indigo/10 transition-colors"
+                className="flex items-center gap-1.5 rounded-lg border border-accent-indigo px-3 py-1.5 text-xs text-accent-indigo transition-colors hover:bg-accent-indigo/10 focus-ring"
               >
                 <Play className="w-3 h-3 fill-current" />
                 Play

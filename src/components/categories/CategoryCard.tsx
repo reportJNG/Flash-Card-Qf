@@ -24,7 +24,7 @@ export function CategoryCard({ category, index, onClick, onEdit, onDelete }: Cat
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: index * 0.05 }}
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -2 }}
       className={cn(
         'panel surface-hover relative min-w-0 cursor-pointer p-5 focus-within:border-border-active',
         category.is_special && 'border-accent-gold/35 bg-amber-500/5'
@@ -32,15 +32,15 @@ export function CategoryCard({ category, index, onClick, onEdit, onDelete }: Cat
     >
       <div onClick={onClick}>
         {/* Header */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="mb-3 flex items-start justify-between">
+          <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border-subtle bg-bg-quaternary" style={{ color: category.color }}>
               <CategoryIcon icon={category.icon} className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <h3 className="font-semibold text-text-primary truncate">{category.name}</h3>
+              <h3 className="truncate font-semibold text-text-primary">{category.name}</h3>
               {category.type && (
-                <span className="text-xs text-text-muted bg-bg-quaternary px-2 py-0.5 rounded-full">
+                <span className="rounded-full bg-bg-quaternary px-2 py-0.5 text-xs text-text-muted">
                   {category.type}
                 </span>
               )}
@@ -56,7 +56,7 @@ export function CategoryCard({ category, index, onClick, onEdit, onDelete }: Cat
         </div>
 
         {/* Question count */}
-        <div className="flex items-center gap-1.5 text-sm text-text-muted mb-3">
+        <div className="mb-3 flex items-center gap-1.5 text-sm text-text-muted">
           <FolderOpen className="w-4 h-4" />
           <span>{category.question_count} questions</span>
         </div>

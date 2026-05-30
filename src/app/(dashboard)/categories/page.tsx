@@ -97,13 +97,13 @@ export default function CategoriesPage() {
           title="No categories yet"
           description="Create your first category to start organizing your flashcards"
           action={
-            <button
+            <Button
               onClick={() => setShowCreate(true)}
-              className="flex items-center gap-2 rounded-lg bg-accent-indigo px-6 py-3 text-white transition-colors hover:bg-indigo-600 focus-ring"
+              className="bg-accent-indigo text-white hover:bg-accent-indigo/90"
             >
               <Plus className="w-4 h-4" />
               Create Category
-            </button>
+            </Button>
           }
         />
       ) : (

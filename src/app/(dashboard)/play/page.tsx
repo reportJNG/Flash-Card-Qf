@@ -163,7 +163,7 @@ export default function PlaySetupPage() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="mx-auto max-w-2xl space-y-6"
+      className="mx-auto max-w-3xl space-y-5"
     >
       <motion.div variants={itemVariants}>
         <PageHeader
@@ -174,7 +174,7 @@ export default function PlaySetupPage() {
       </motion.div>
 
       {/* Mode Selection */}
-      <motion.div variants={itemVariants} className="space-y-3">
+      <motion.div variants={itemVariants} className="panel space-y-3 p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-text-primary">Choose Mode</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <button
@@ -236,7 +236,7 @@ export default function PlaySetupPage() {
       </motion.div>
 
       {/* Category Selection */}
-      <motion.div variants={itemVariants} className="space-y-3">
+      <motion.div variants={itemVariants} className="panel space-y-3 p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-text-primary">
           Select Categories
         </h2>
@@ -255,7 +255,7 @@ export default function PlaySetupPage() {
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            className="max-h-56 overflow-y-auto rounded-lg border border-border-subtle bg-bg-tertiary p-2 scrollbar-thin"
+            className="max-h-56 overflow-y-auto rounded-lg border border-border-subtle bg-bg-secondary p-2 app-scrollbar"
           >
             {categories
               .filter((c) => !c.is_special)
@@ -290,7 +290,7 @@ export default function PlaySetupPage() {
       </motion.div>
 
       {/* Question Count */}
-      <motion.div variants={itemVariants} className="space-y-3">
+      <motion.div variants={itemVariants} className="panel space-y-3 p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-text-primary">
           How Many Questions?
         </h2>
@@ -300,7 +300,7 @@ export default function PlaySetupPage() {
               key={opt.value}
               onClick={() => setCount(String(opt.value) as typeof count)}
               className={cn(
-                "rounded-lg px-4 py-2 text-sm font-medium transition-all focus-ring",
+                "rounded-lg border border-transparent px-4 py-2 text-sm font-medium transition-colors focus-ring",
                 count === String(opt.value)
                   ? "bg-accent-indigo text-white"
                   : "bg-bg-tertiary text-text-secondary hover:text-text-primary",
@@ -312,7 +312,7 @@ export default function PlaySetupPage() {
           <button
             onClick={() => setCount("custom")}
             className={cn(
-              "rounded-lg px-4 py-2 text-sm font-medium transition-all focus-ring",
+              "rounded-lg border border-transparent px-4 py-2 text-sm font-medium transition-colors focus-ring",
               count === "custom"
                 ? "bg-accent-indigo text-white"
                 : "bg-bg-tertiary text-text-secondary hover:text-text-primary",
@@ -323,7 +323,7 @@ export default function PlaySetupPage() {
           <button
             onClick={() => setCount("infinity")}
             className={cn(
-              "flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-all focus-ring",
+              "flex items-center gap-1.5 rounded-lg border border-transparent px-4 py-2 text-sm font-medium transition-colors focus-ring",
               count === "infinity"
                 ? "bg-accent-indigo text-white"
                 : "bg-bg-tertiary text-text-secondary hover:text-text-primary",
@@ -364,7 +364,7 @@ export default function PlaySetupPage() {
       </motion.div>
 
       {mode === "normal" && (
-        <motion.div variants={itemVariants} className="space-y-3">
+        <motion.div variants={itemVariants} className="panel space-y-3 p-4 sm:p-5">
           <h2 className="text-lg font-semibold text-text-primary">
             Question Order
           </h2>
@@ -410,7 +410,7 @@ export default function PlaySetupPage() {
       {/* Summary + Start */}
       <motion.div
         variants={itemVariants}
-        className="sticky bottom-[calc(5rem+env(safe-area-inset-bottom))] z-20 rounded-lg border border-border-subtle bg-bg-secondary/95 p-3 shadow-elevated backdrop-blur-lg md:bottom-4 md:p-4"
+        className="sticky bottom-[calc(5rem+env(safe-area-inset-bottom))] z-20 rounded-lg border border-border-subtle bg-bg-primary/95 p-3 shadow-elevated backdrop-blur-lg md:bottom-4 md:p-4"
       >
         <div className="mx-auto flex max-w-2xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm">

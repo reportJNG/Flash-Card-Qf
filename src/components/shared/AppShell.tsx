@@ -20,7 +20,7 @@ export function PageContainer({
         size === 'default' && 'max-w-5xl',
         size === 'wide' && 'max-w-6xl',
         size === 'full' && 'max-w-none',
-        flush ? 'px-0 py-0' : 'px-3 py-4 sm:px-4 md:px-6 md:py-6 lg:px-8 lg:py-8',
+        flush ? 'px-0 py-0' : 'px-3 py-4 sm:px-5 md:px-6 md:py-6 lg:px-8 lg:py-8',
         className
       )}
     >
@@ -108,7 +108,7 @@ export function SegmentedControl<T extends string>({
             type="button"
             onClick={() => onChange(option.value)}
             className={cn(
-              'flex min-h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium transition-all focus-ring',
+              'flex min-h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium transition-colors focus-ring',
               active ? 'bg-bg-quaternary text-text-primary shadow-card' : 'text-text-muted hover:bg-white/5 hover:text-text-primary'
             )}
           >
@@ -133,7 +133,7 @@ export function StatCard({
   tone?: string;
 }) {
   return (
-    <div className="panel min-w-0 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated">
+    <div className="panel min-w-0 p-4 transition-colors duration-200 hover:border-border-active hover:bg-bg-quaternary/60">
       <div className="mb-3 flex items-center justify-between gap-2">
         <span className="text-xs font-medium uppercase tracking-wide text-text-muted">{label}</span>
         <Icon className={cn('h-4 w-4', tone)} />
@@ -160,7 +160,7 @@ export function IconButton({
       aria-label={label}
       title={label}
       className={cn(
-        'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-white/5 hover:text-text-primary focus-ring disabled:pointer-events-none disabled:opacity-50',
+        'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-transparent text-text-muted transition-colors hover:border-border-subtle hover:bg-bg-quaternary hover:text-text-primary focus-ring disabled:pointer-events-none disabled:opacity-50',
         className
       )}
       {...props}
@@ -185,6 +185,34 @@ export function LoadingState({ label = 'Loading' }: { label?: string }) {
     <div className="flex h-64 flex-col items-center justify-center gap-3 text-text-muted">
       <div className="h-8 w-8 rounded-full border-2 border-accent-indigo border-t-transparent animate-spin" />
       <p className="text-sm">{label}</p>
+    </div>
+  );
+}
+
+export function ModalPanel({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn('max-h-[92vh] w-full overflow-y-auto rounded-lg border border-border-subtle bg-bg-secondary p-5 shadow-elevated app-scrollbar sm:p-6', className)}>
+      {children}
+    </div>
+  );
+}
+
+export function TableShell({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn('overflow-hidden rounded-lg border border-border-subtle bg-bg-tertiary', className)}>
+      {children}
     </div>
   );
 }

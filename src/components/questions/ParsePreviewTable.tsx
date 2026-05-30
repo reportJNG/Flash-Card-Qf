@@ -45,7 +45,7 @@ export function ParsePreviewTable({ pairs, onPairsChange, onImport, onCancel }: 
   return (
     <div className="space-y-4">
       {invalidCount > 0 && (
-        <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-400 text-sm">
+        <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-sm text-amber-400">
           <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{invalidCount} blocks were skipped due to parse errors</span>
         </div>
@@ -100,14 +100,14 @@ export function ParsePreviewTable({ pairs, onPairsChange, onImport, onCancel }: 
         ))}
       </div>
 
-      <div className="hidden max-h-[400px] overflow-y-auto rounded-lg border border-border-subtle bg-bg-tertiary scrollbar-thin md:block">
+      <div className="hidden max-h-[400px] overflow-auto rounded-lg border border-border-subtle bg-bg-tertiary app-scrollbar md:block">
         <table className="w-full min-w-[720px]">
           <thead>
             <tr className="bg-bg-quaternary text-left">
-              <th className="px-3 py-2 text-xs text-text-muted font-medium w-10">#</th>
-              <th className="px-3 py-2 text-xs text-text-muted font-medium">Question</th>
-              <th className="px-3 py-2 text-xs text-text-muted font-medium">Answer</th>
-              <th className="px-3 py-2 text-xs text-text-muted font-medium w-20"></th>
+              <th className="w-10 px-3 py-2 text-xs font-medium text-text-muted">#</th>
+              <th className="px-3 py-2 text-xs font-medium text-text-muted">Question</th>
+              <th className="px-3 py-2 text-xs font-medium text-text-muted">Answer</th>
+              <th className="w-20 px-3 py-2 text-xs font-medium text-text-muted"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border-subtle">
@@ -158,14 +158,14 @@ export function ParsePreviewTable({ pairs, onPairsChange, onImport, onCancel }: 
         <button
           onClick={handleImport}
           disabled={isImporting || validPairs.length === 0}
-          className="flex items-center justify-center gap-2 rounded-lg bg-accent-indigo px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-indigo/90 disabled:bg-bg-quaternary disabled:text-text-muted"
+          className="flex items-center justify-center gap-2 rounded-lg bg-accent-indigo px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-indigo/90 disabled:bg-bg-quaternary disabled:text-text-muted focus-ring"
         >
           <Upload className="w-4 h-4" />
           {isImporting ? 'Importing...' : `Import ${validPairs.length} Questions`}
         </button>
         <button
           onClick={onCancel}
-          className="px-6 py-2.5 text-text-secondary hover:text-text-primary transition-colors text-sm"
+          className="rounded-lg px-6 py-2.5 text-sm text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary focus-ring"
         >
           Cancel
         </button>

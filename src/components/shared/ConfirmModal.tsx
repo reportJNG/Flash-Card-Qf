@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ModalPanel } from '@/components/shared/AppShell';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -50,10 +51,11 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, title, description, c
             animate={isShaking ? { x: [-10, 10, -10, 10, 0] } : { scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-lg border border-border-subtle bg-bg-secondary p-5 shadow-elevated sm:p-6"
+            className="w-full max-w-md"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between mb-4">
+            <ModalPanel>
+            <div className="mb-4 flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <AlertTriangle className={`w-8 h-8 ${danger ? 'text-accent-red' : 'text-accent-orange'}`} />
                 <h2 className={`text-xl font-semibold ${danger ? 'text-accent-red' : 'text-text-primary'}`}>{title}</h2>
@@ -63,10 +65,10 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, title, description, c
               </button>
             </div>
 
-            <p className="text-text-secondary mb-4">{description}</p>
+            <p className="mb-4 text-text-secondary">{description}</p>
 
             <div className="mb-4">
-              <label className="block text-sm text-text-muted mb-2">
+              <label className="mb-2 block text-sm text-text-muted">
                 Type <span className="font-mono text-text-primary">DELETE</span> to confirm
               </label>
               <Input
@@ -78,7 +80,7 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, title, description, c
               />
             </div>
 
-            <div className="flex gap-3 justify-end">
+            <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={handleClose} className="border-border-subtle text-text-secondary hover:text-text-primary">
                 Cancel
               </Button>
@@ -90,6 +92,7 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, title, description, c
                 {confirmText}
               </Button>
             </div>
+            </ModalPanel>
           </motion.div>
         </motion.div>
       )}

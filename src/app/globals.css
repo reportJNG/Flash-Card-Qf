@@ -34,6 +34,7 @@
     @apply bg-bg-secondary text-text-primary antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     min-height: 100vh;
+    text-rendering: optimizeLegibility;
   }
 
   html {
@@ -62,7 +63,7 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
   .panel {
-    @apply rounded-lg border border-border-subtle bg-bg-tertiary shadow-card;
+    @apply rounded-lg border border-border-subtle bg-bg-tertiary/95 shadow-card;
   }
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg-secondary;
@@ -71,7 +72,7 @@
     @apply w-full rounded-lg border border-border-subtle bg-bg-quaternary px-3 py-2 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-accent-indigo/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60;
   }
   .surface-hover {
-    @apply transition-all duration-200 hover:-translate-y-0.5 hover:border-border-active hover:shadow-elevated;
+    @apply transition-colors duration-200 hover:border-border-active hover:bg-bg-quaternary/70;
   }
   .bg-shimmer {
     background: linear-gradient(
@@ -83,16 +84,21 @@
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
   }
+  .app-scrollbar,
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: #334155 transparent;
   }
+  .app-scrollbar::-webkit-scrollbar,
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
   }
+  .app-scrollbar::-webkit-scrollbar-track,
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;
   }
+  .app-scrollbar::-webkit-scrollbar-thumb,
   .scrollbar-thin::-webkit-scrollbar-thumb {
     background: #334155;
     border-radius: 3px;

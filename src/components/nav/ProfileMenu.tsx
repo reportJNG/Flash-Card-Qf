@@ -42,7 +42,7 @@ export function ProfileMenu({ profile, collapsed = false }: ProfileMenuProps) {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors',
+          'flex w-full items-center gap-3 rounded-lg border border-transparent p-2 transition-colors hover:border-border-subtle hover:bg-bg-tertiary',
           collapsed && 'justify-center'
         )}
       >
@@ -58,17 +58,17 @@ export function ProfileMenu({ profile, collapsed = false }: ProfileMenuProps) {
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute bottom-full left-0 right-0 mb-2 bg-bg-quaternary rounded-lg shadow-elevated border border-border-subtle py-1 z-50">
+          <div className="absolute bottom-full left-0 right-0 z-50 mb-2 rounded-lg border border-border-subtle bg-bg-quaternary py-1 shadow-elevated">
             <button
               onClick={() => { router.push('/settings'); setIsOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors"
+              className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
             >
               <Settings className="w-4 h-4" />
               Settings
             </button>
             <button
               onClick={() => { handleSwitch(); setIsOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors"
+              className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
             >
               <Users className="w-4 h-4" />
               Switch Profile
@@ -76,7 +76,7 @@ export function ProfileMenu({ profile, collapsed = false }: ProfileMenuProps) {
             <div className="border-t border-border-subtle my-1" />
             <button
               onClick={() => { handleLogout(); setIsOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-accent-red hover:bg-red-500/10 transition-colors"
+              className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-accent-red transition-colors hover:bg-red-500/10"
             >
               <LogOut className="w-4 h-4" />
               Logout

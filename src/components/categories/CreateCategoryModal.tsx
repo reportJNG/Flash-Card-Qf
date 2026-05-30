@@ -6,6 +6,7 @@ import { X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ModalPanel } from '@/components/shared/AppShell';
 import { createCategory } from '@/lib/actions/categories';
 import { AVATAR_COLORS, CategoryOverview } from '@/types/app';
 import { CATEGORY_ICON_OPTIONS, CategoryIcon, normalizeCategoryIcon } from '@/lib/category-icons';
@@ -102,9 +103,10 @@ export function CreateCategoryModal({ isOpen, onClose, profileId, onSuccess, edi
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.96, y: 16 }}
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-            className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-lg border border-border-subtle bg-bg-secondary p-6 shadow-elevated"
+            className="w-full max-w-md"
             onClick={e => e.stopPropagation()}
           >
+            <ModalPanel>
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-xl font-semibold tracking-tight text-text-primary">
@@ -172,6 +174,7 @@ export function CreateCategoryModal({ isOpen, onClose, profileId, onSuccess, edi
                 {isSubmitting ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Category'}
               </Button>
             </form>
+            </ModalPanel>
           </motion.div>
         </motion.div>
       )}

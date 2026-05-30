@@ -6,6 +6,7 @@ import { X, Check, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ModalPanel } from '@/components/shared/AppShell';
 import { AVATAR_COLORS } from '@/types/app';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -71,9 +72,10 @@ export function CreateProfileModal({ isOpen, onClose, onSuccess }: CreateProfile
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.96, y: 16 }}
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-            className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-lg border border-border-subtle bg-bg-secondary p-5 shadow-elevated sm:p-6"
+            className="w-full max-w-md"
             onClick={e => e.stopPropagation()}
           >
+            <ModalPanel>
             <div className="mb-6 flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border-subtle bg-bg-tertiary text-accent-indigo">
@@ -129,6 +131,7 @@ export function CreateProfileModal({ isOpen, onClose, onSuccess }: CreateProfile
                 {isSubmitting ? 'Creating...' : 'Create Profile'}
               </Button>
             </form>
+            </ModalPanel>
           </motion.div>
         </motion.div>
       )}

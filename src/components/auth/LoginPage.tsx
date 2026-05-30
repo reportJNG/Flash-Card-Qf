@@ -79,18 +79,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-bg-primary px-4 py-8 sm:p-6">
-      {/* Logo */}
+    <div className="flex min-h-screen flex-col items-center justify-center bg-bg-secondary px-4 py-8 sm:p-6">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-10 text-center"
+        className="mb-8 text-center"
       >
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl border border-border-subtle bg-bg-tertiary shadow-card">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-lg border border-border-subtle bg-bg-tertiary shadow-card">
           <Layers className="h-7 w-7 text-accent-indigo" />
         </div>
-        <h1 className="mb-2 text-4xl font-semibold tracking-tight text-gradient sm:text-5xl">FlashQF</h1>
+        <h1 className="mb-2 text-4xl font-semibold tracking-tight text-text-primary sm:text-5xl">FlashQF</h1>
         <p className="text-xs uppercase tracking-[0.2em] text-text-muted">Flip. Rate. Master.</p>
       </motion.div>
 
@@ -122,12 +121,12 @@ export default function LoginPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="mb-6 text-text-secondary"
+            className="mb-6 text-sm text-text-secondary"
           >
             Select a profile to continue
           </motion.p>
 
-          <div className="grid w-full max-w-lg grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          <div className="grid w-full max-w-lg grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
             {profiles.map((profile, i) => (
               <ProfileCard
                 key={profile.id}
@@ -149,7 +148,7 @@ export default function LoginPage() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowCreateModal(true)}
-          className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-accent-indigo text-white shadow-glow-sm transition-colors hover:bg-indigo-600 focus-ring"
+          className="fixed bottom-6 right-6 z-30 flex h-12 w-12 items-center justify-center rounded-lg border border-border-active bg-accent-indigo text-white shadow-card transition-colors hover:bg-accent-indigo/90 focus-ring"
           aria-label="Create profile"
         >
           <Plus className="w-6 h-6" />

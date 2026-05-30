@@ -10,7 +10,7 @@ interface DifficultyBadgeProps {
 }
 
 const bgMap: Record<DifficultyRating, string> = {
-  none: 'bg-slate-700/50',
+  none: 'bg-bg-quaternary',
   easy: 'bg-green-500/15',
   good: 'bg-teal-500/15',
   hard: 'bg-orange-500/15',
@@ -21,7 +21,7 @@ export function DifficultyBadge({ difficulty, className, showLabel = true }: Dif
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize',
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize',
         bgMap[difficulty],
         className
       )}

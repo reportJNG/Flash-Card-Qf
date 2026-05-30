@@ -317,7 +317,7 @@ export default function StatsPage() {
               </div>
             ))}
           </MobileCardList>
-          <div className="hidden overflow-x-auto md:block">
+          <div className="hidden overflow-x-auto app-scrollbar md:block">
             <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="bg-bg-quaternary text-left">

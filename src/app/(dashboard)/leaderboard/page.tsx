@@ -120,7 +120,7 @@ export default function LeaderboardPage() {
             </div>
           ))}
         </MobileCardList>
-        <div className="hidden overflow-x-auto md:block">
+        <div className="hidden overflow-x-auto app-scrollbar md:block">
           <table className="w-full min-w-[720px]">
             <thead>
               <tr className="border-b border-border-subtle bg-bg-quaternary/70 text-left">

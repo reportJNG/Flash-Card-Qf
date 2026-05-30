@@ -81,9 +81,8 @@ export default function ResultsPage() {
 
   return (
     <div className="min-h-[calc(100svh-8rem)] rounded-lg border border-border-subtle bg-bg-primary px-4 py-6 shadow-card md:min-h-[calc(100svh-3rem)] md:py-8">
-      <div className="mx-auto max-w-lg space-y-8">
-        {/* Back */}
-        <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 rounded-lg text-sm text-text-muted transition-colors hover:text-text-primary focus-ring">
+      <div className="mx-auto max-w-2xl space-y-6">
+        <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 rounded-lg px-2 py-1 text-sm text-text-muted transition-colors hover:bg-white/5 hover:text-text-primary focus-ring">
           <ArrowLeft className="w-4 h-4" />
           Dashboard
         </button>
@@ -92,15 +91,15 @@ export default function ResultsPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center"
+          className="panel p-6 text-center sm:p-8"
         >
-          <h1 className="text-2xl font-bold text-text-primary mb-4">
+          <h1 className="mb-4 text-2xl font-bold text-text-primary">
             {session.status === 'completed' ? 'Session Complete!' : 'You Quit'}
           </h1>
           <div className="flex items-center justify-center gap-3">
             <Trophy className="w-10 h-10 text-accent-gold" />
             <motion.span
-              className="text-6xl font-extrabold text-accent-gold"
+              className="text-5xl font-extrabold text-accent-gold sm:text-6xl"
               initial={{ scale: 0.5 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 200, damping: 15 }}
@@ -108,14 +107,14 @@ export default function ResultsPage() {
               <AnimatedNumber value={session.points_earned} />
             </motion.span>
           </div>
-          <p className="text-text-secondary mt-2">points earned</p>
+          <p className="mt-2 text-text-secondary">points earned</p>
         </motion.div>
 
-        {/* Breakdown Bar */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
+          className="panel p-4"
         >
           <div className="flex h-8 overflow-hidden rounded-full bg-bg-tertiary">
             {segments.map((seg, i) => (
@@ -144,7 +143,7 @@ export default function ResultsPage() {
               </motion.div>
             ))}
           </div>
-          <div className="mt-2 flex flex-wrap justify-center gap-4">
+          <div className="mt-3 flex flex-wrap justify-center gap-4">
             {segments.map(seg => (
               <div key={seg.key} className="flex items-center gap-1.5 text-xs">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: seg.color }} />
@@ -161,7 +160,7 @@ export default function ResultsPage() {
           transition={{ delay: 0.5 }}
           className="flex justify-center"
         >
-          <div className="flex items-center gap-3 rounded-full border border-border-subtle bg-bg-tertiary px-6 py-3 shadow-card">
+          <div className="flex items-center gap-3 rounded-lg border border-border-subtle bg-bg-tertiary px-6 py-3 shadow-card">
             <span className="text-sm text-text-muted">Smart Rate</span>
             <span className={cn(
               'text-xl font-bold',
@@ -177,10 +176,10 @@ export default function ResultsPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="space-y-2"
+          className="panel space-y-3 p-4"
         >
           <h2 className="text-lg font-semibold text-text-primary">Question Review</h2>
-          <div className="max-h-64 space-y-2 overflow-y-auto scrollbar-thin">
+          <div className="max-h-72 space-y-2 overflow-y-auto app-scrollbar">
             {answers.map((a, i) => (
               <motion.div
                 key={i}
@@ -214,25 +213,25 @@ export default function ResultsPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-            className="flex flex-col gap-3 sm:flex-row"
+            className="grid grid-cols-1 gap-3 sm:grid-cols-3"
         >
           <button
             onClick={() => router.push('/play')}
-            className="flex items-center justify-center gap-2 rounded-lg border border-accent-indigo px-6 py-3 text-accent-indigo transition-colors hover:bg-accent-indigo/10"
+            className="flex items-center justify-center gap-2 rounded-lg border border-accent-indigo px-4 py-3 text-sm font-medium text-accent-indigo transition-colors hover:bg-accent-indigo/10 focus-ring"
           >
             <RefreshCw className="w-4 h-4" />
             Play Again
           </button>
           <button
             onClick={() => router.push('/play')}
-            className="flex items-center justify-center gap-2 rounded-lg bg-accent-indigo px-6 py-3 text-white transition-colors hover:bg-accent-indigo/90"
+            className="flex items-center justify-center gap-2 rounded-lg bg-accent-indigo px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-indigo/90 focus-ring"
           >
             <Sliders className="w-4 h-4" />
             New Setup
           </button>
           <button
             onClick={() => router.push('/dashboard')}
-            className="flex items-center justify-center gap-2 rounded-lg bg-bg-tertiary px-6 py-3 text-text-primary transition-colors hover:bg-bg-quaternary"
+            className="flex items-center justify-center gap-2 rounded-lg border border-border-subtle bg-bg-tertiary px-4 py-3 text-sm font-medium text-text-primary transition-colors hover:bg-bg-quaternary focus-ring"
           >
             <Home className="w-4 h-4" />
             Dashboard

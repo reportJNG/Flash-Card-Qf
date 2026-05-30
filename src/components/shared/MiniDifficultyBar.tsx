@@ -26,7 +26,7 @@ export function MiniDifficultyBar({
   const total = noneCount + easyCount + goodCount + hardCount + superHardCount;
 
   if (total === 0) {
-    return <div className={cn('h-1.5 bg-slate-700/50 rounded-full', className)} />;
+    return <div className={cn('h-1.5 rounded-full bg-bg-quaternary', className)} />;
   }
 
   const segments = [
@@ -43,7 +43,7 @@ export function MiniDifficultyBar({
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
     >
-      <div className="h-1.5 bg-slate-700/50 rounded-full flex overflow-hidden">
+      <div className="flex h-1.5 overflow-hidden rounded-full bg-bg-quaternary">
         {segments.map((seg, i) =>
           seg.count > 0 ? (
             <motion.div
@@ -65,10 +65,10 @@ export function MiniDifficultyBar({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 5 }}
             transition={{ duration: 0.15 }}
-            className="absolute bottom-full left-0 mb-2 bg-bg-quaternary rounded-lg p-3 shadow-elevated z-50 min-w-[180px]"
+            className="absolute bottom-full left-0 z-50 mb-2 min-w-[180px] rounded-lg border border-border-subtle bg-bg-quaternary p-3 shadow-elevated"
           >
             {segments.map((seg, i) => (
-              <div key={i} className="flex items-center justify-between gap-4 text-sm py-0.5">
+              <div key={i} className="flex items-center justify-between gap-4 py-0.5 text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: seg.color }} />
                   <span className="text-text-secondary">{seg.label}</span>

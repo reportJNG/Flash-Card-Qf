@@ -146,7 +146,7 @@ export default function DashboardPage() {
           {navCards.map((card) => (
             <motion.button
               key={card.label}
-              whileHover={{ scale: 1.03 }}
+            whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => router.push(card.href)}
               className={cn(
