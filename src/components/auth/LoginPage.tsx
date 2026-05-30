@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Plus, Layers } from 'lucide-react';
@@ -21,6 +21,8 @@ export default function LoginPage() {
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
   const [showPinModal, setShowPinModal] = useState(false);
   const [pinError, setPinError] = useState<string>();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const loginRequestRef = useRef(false);
   const router = useRouter();
 
   const loadProfiles = useCallback(async () => {
@@ -46,6 +48,12 @@ export default function LoginPage() {
   };
 
   const handleLogin = async (username: string, pin?: string) => {
+    if (loginRequestRef.current) return;
+
+    loginRequestRef.current = true;
+    setIsLoggingIn(true);
+    setPinError(undefined);
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -65,6 +73,9 @@ export default function LoginPage() {
     } catch {
       setPinError('Something went wrong');
       toast.error('Login failed');
+    } finally {
+      loginRequestRef.current = false;
+      setIsLoggingIn(false);
     }
   };
 
@@ -164,11 +175,17 @@ export default function LoginPage() {
 
       <PinModal
         isOpen={showPinModal}
-        onClose={() => { setShowPinModal(false); setSelectedProfile(null); setPinError(undefined); }}
+        onClose={() => {
+          if (isLoggingIn) return;
+          setShowPinModal(false);
+          setSelectedProfile(null);
+          setPinError(undefined);
+        }}
         onSubmit={handlePinSubmit}
         profileName={selectedProfile?.display_name || ''}
         profileColor={selectedProfile?.avatar_color || '#6366f1'}
         error={pinError}
+        isSubmitting={isLoggingIn}
       />
     </div>
   );

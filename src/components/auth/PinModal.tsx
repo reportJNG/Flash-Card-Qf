@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Delete } from 'lucide-react';
+import { X, Delete, Loader2 } from 'lucide-react';
 import { Avatar } from '@/components/shared/Avatar';
 import { ModalPanel } from '@/components/shared/AppShell';
 
@@ -13,9 +13,10 @@ interface PinModalProps {
   profileName: string;
   profileColor: string;
   error?: string;
+  isSubmitting?: boolean;
 }
 
-export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor, error }: PinModalProps) {
+export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor, error, isSubmitting = false }: PinModalProps) {
   const [pin, setPin] = useState('');
   const [isShaking, setIsShaking] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
@@ -65,7 +66,7 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
   }, [isOpen]);
 
   const handleKeyPress = useCallback((key: string) => {
-    if (isLocked) return;
+    if (isLocked || isSubmitting) return;
     if (key === 'backspace') {
       setPin(prev => prev.slice(0, -1));
     } else if (key === 'enter') {
@@ -73,13 +74,9 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
         onSubmit(pin);
       }
     } else if (pin.length < 4 && /^\d$/.test(key)) {
-      const newPin = pin + key;
-      setPin(newPin);
-      if (newPin.length === 4) {
-        setTimeout(() => onSubmit(newPin), 100);
-      }
+      setPin(prev => prev + key);
     }
-  }, [pin, isLocked, onSubmit]);
+  }, [pin, isLocked, isSubmitting, onSubmit]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -153,7 +150,7 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
                 <button
                   key={key}
                   onClick={() => handleKeyPress(key)}
-                  disabled={isLocked}
+                  disabled={isLocked || isSubmitting}
                   className="h-14 rounded-lg border border-border-subtle bg-bg-quaternary text-lg font-medium text-text-primary transition-colors hover:bg-bg-tertiary disabled:opacity-50 focus-ring"
                 >
                   {key}
@@ -161,24 +158,24 @@ export function PinModal({ isOpen, onClose, onSubmit, profileName, profileColor,
               ))}
               <button
                 onClick={() => handleKeyPress('backspace')}
-                disabled={isLocked}
+                disabled={isLocked || isSubmitting}
                 className="flex h-14 items-center justify-center rounded-lg border border-border-subtle bg-bg-quaternary text-text-primary transition-colors hover:bg-bg-tertiary disabled:opacity-50 focus-ring"
               >
                 <Delete className="w-5 h-5" />
               </button>
               <button
                 onClick={() => handleKeyPress('0')}
-                disabled={isLocked}
+                disabled={isLocked || isSubmitting}
                 className="h-14 rounded-lg border border-border-subtle bg-bg-quaternary text-lg font-medium text-text-primary transition-colors hover:bg-bg-tertiary disabled:opacity-50 focus-ring"
               >
                 0
               </button>
               <button
                 onClick={() => handleKeyPress('enter')}
-                disabled={isLocked || pin.length !== 4}
-                className="h-14 rounded-lg bg-accent-indigo text-lg font-medium text-white transition-colors hover:bg-accent-indigo/90 disabled:bg-bg-quaternary disabled:text-text-muted focus-ring"
+                disabled={isLocked || isSubmitting || pin.length !== 4}
+                className="flex h-14 items-center justify-center rounded-lg bg-accent-indigo text-lg font-medium text-white transition-colors hover:bg-accent-indigo/90 disabled:bg-bg-quaternary disabled:text-text-muted focus-ring"
               >
-                Go
+                {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Go'}
               </button>
             </div>
             </ModalPanel>
