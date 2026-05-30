@@ -26,7 +26,7 @@ export function DashboardShell({ children, profile }: DashboardShellProps) {
             : 'pb-[calc(5rem+env(safe-area-inset-bottom))] md:ml-[var(--flashqf-sidebar-width,240px)] md:pb-0'
         )}
       >
-        <PageContainer size={isActivePlaySession ? 'full' : 'wide'}>
+        <PageContainer size={isActivePlaySession ? 'full' : 'wide'} flush={isActivePlaySession}>
           {children}
         </PageContainer>
       </main>
