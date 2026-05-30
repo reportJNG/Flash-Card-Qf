@@ -18,6 +18,18 @@ export type SessionCurrentQuestionResult = {
   question: Question | null;
 };
 
+type QueueRow = {
+  question_id: string;
+  question_order: number;
+};
+
+type OrderedQuestionRow = {
+  id: string;
+  category_id: string;
+  order_index: number;
+  created_at: string;
+};
+
 async function getQuestionById(questionId: string): Promise<Question | null> {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -30,6 +42,57 @@ async function getQuestionById(questionId: string): Promise<Question | null> {
   return data as Question;
 }
 
+async function getOrderedQuestionQueue(
+  profileId: string,
+  categoryIds: string[],
+  limit: number | null
+): Promise<ActionResult<string[]>> {
+  const supabase = createClient();
+  let orderedCategoryIds = categoryIds;
+
+  if (orderedCategoryIds.length === 0) {
+    const { data: categories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('profile_id', profileId)
+      .order('is_special', { ascending: true })
+      .order('created_at', { ascending: true });
+
+    if (categoryError) return { success: false, error: categoryError.message };
+    orderedCategoryIds = categories?.map(category => category.id) || [];
+  }
+
+  let query = supabase
+    .from('questions')
+    .select('id, category_id, order_index, created_at')
+    .eq('profile_id', profileId);
+
+  if (orderedCategoryIds.length > 0) {
+    query = query.in('category_id', orderedCategoryIds);
+  }
+
+  const { data, error } = await query;
+  if (error) return { success: false, error: error.message };
+
+  const categoryOrder = new Map(
+    orderedCategoryIds.map((categoryId, index) => [categoryId, index])
+  );
+
+  const questionQueue = ((data as OrderedQuestionRow[]) || [])
+    .sort((a, b) => {
+      const categoryA = categoryOrder.get(a.category_id) ?? Number.MAX_SAFE_INTEGER;
+      const categoryB = categoryOrder.get(b.category_id) ?? Number.MAX_SAFE_INTEGER;
+
+      if (categoryA !== categoryB) return categoryA - categoryB;
+      if (a.order_index !== b.order_index) return a.order_index - b.order_index;
+      return a.created_at.localeCompare(b.created_at);
+    })
+    .slice(0, limit ?? undefined)
+    .map(question => question.id);
+
+  return { success: true, data: questionQueue };
+}
+
 export async function createSession(
   profileId: string,
   config: {
@@ -38,6 +101,7 @@ export async function createSession(
     isAllCategories: boolean;
     isInfinity: boolean;
     questionLimit: number | null;
+    shuffleQuestions?: boolean;
   }
 ): Promise<ActionResult<PlaySession>> {
   const session = await getSession();
@@ -63,18 +127,26 @@ export async function createSession(
     categoryNames = allCats?.map(c => c.name) || [];
   }
 
-  // Call get_play_queue function
-  const { data: queueData, error: queueError } = await supabase.rpc('get_play_queue', {
-    p_profile_id: profileId,
-    p_category_ids: config.categoryIds.length > 0 ? config.categoryIds : [],
-    p_mode: config.mode,
-    p_limit: config.questionLimit,
-  });
+  let queueResult: ActionResult<string[]>;
+  if (config.mode === 'normal' && config.shuffleQuestions === false) {
+    queueResult = await getOrderedQuestionQueue(profileId, config.categoryIds, config.questionLimit);
+  } else {
+    const { data: queueData, error: queueError } = await supabase.rpc('get_play_queue', {
+      p_profile_id: profileId,
+      p_category_ids: config.categoryIds.length > 0 ? config.categoryIds : [],
+      p_mode: config.mode,
+      p_limit: config.questionLimit,
+    });
 
-  if (queueError) return { success: false, error: queueError.message };
+    if (queueError) return { success: false, error: queueError.message };
 
-  const queue = (queueData as { question_id: string; question_order: number }[]) || [];
-  const questionQueue = queue.map(q => q.question_id);
+    const queue = (queueData as QueueRow[]) || [];
+    queueResult = { success: true, data: queue.map(q => q.question_id) };
+  }
+
+  if (!queueResult.success) return { success: false, error: queueResult.error };
+
+  const questionQueue = queueResult.data || [];
 
   if (questionQueue.length === 0) {
     return { success: false, error: 'No questions found for selected categories' };

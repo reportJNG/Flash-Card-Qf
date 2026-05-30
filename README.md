@@ -1,4 +1,4 @@
-# FlashQF
+w# FlashQF
 
 FlashQF is a small flashcard study app built with Next.js, TypeScript, Supabase, and Tailwind CSS. It lets users create profiles, organize questions into categories, import question sets, play study sessions, and review progress through stats and leaderboards.
 
